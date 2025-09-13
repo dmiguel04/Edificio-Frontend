@@ -1,0 +1,149 @@
+// Paleta de colores
+$color-primario: #0D3B66;
+$color-secundario: #3A86FF;
+$color-acento: #4CAF50;
+$color-neutro-claro: #F5F5F5;
+$color-neutro-oscuro: #6C757D;
+.volver-link {
+	text-align: center;
+	margin-top: 0.7rem;
+	button {
+		background: none;
+		border: none;
+		color: $color-secundario;
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 1rem;
+		padding: 0;
+		&:hover {
+			color: $color-primario;
+		}
+	}
+}
+.password-group {
+	position: relative;
+}
+
+.password-input {
+	padding-right: 2.7rem;
+}
+
+.toggle-password-btn {
+	position: absolute;
+	top: 50%;
+	right: 0.6rem;
+	transform: translateY(-18%);
+	background: rgba(58,134,255,0.10);
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	width: 2.2rem;
+	height: 2.2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	transition: background 0.2s, box-shadow 0.2s;
+	box-shadow: 0 1px 4px #0001;
+	&:hover {
+		background: rgba(58,134,255,0.22);
+		box-shadow: 0 2px 8px #3A86FF22;
+		svg {
+			filter: drop-shadow(0 0 2px #3A86FF);
+		}
+	}
+	svg {
+		transition: filter 0.2s;
+	}
+}
+// Paleta de colores
+$color-primario: #0D3B66;
+$color-secundario: #3A86FF;
+$color-acento: #4CAF50;
+$color-neutro-claro: #F5F5F5;
+$color-neutro-oscuro: #6C757D;
+
+.register-container {
+	max-width: 430px;
+	margin: 3rem auto;
+	padding: 2rem;
+	border-radius: 16px;
+	background: $color-neutro-claro;
+	color: $color-primario;
+	box-shadow: 0 2px 12px #0002;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.register-title {
+	text-align: center;
+	color: $color-acento;
+	margin-bottom: 1.5rem;
+}
+
+.register-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.input-field {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: 6px;
+	border: 1px solid $color-neutro-oscuro;
+	background: #fff;
+	color: $color-primario;
+	font-size: 1rem;
+	box-sizing: border-box;
+}
+
+.main-btn {
+	width: 100%;
+	padding: 0.7rem;
+	background: $color-primario;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-weight: bold;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background 0.2s;
+	&:hover {
+		background: $color-secundario;
+	}
+	&:disabled {
+		background: $color-neutro-oscuro;
+		cursor: not-allowed;
+	}
+}
+
+.register-error {
+	text-align: center;
+	color: #d32f2f;
+	margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+	.register-container {
+		max-width: 98vw;
+		padding: 1rem;
+		border-radius: 0;
+		margin: 1rem auto;
+		box-shadow: none;
+	}
+	.register-title {
+		font-size: 1.3rem;
+	}
+	.main-btn {
+		font-size: 0.98rem;
+		padding: 0.6rem;
+	}
+}

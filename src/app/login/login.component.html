@@ -1,0 +1,41 @@
+<div class="login-container">
+  <h2 class="login-title">Iniciar sesión</h2>
+  <form *ngIf="!mostrarToken" (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
+    <div class="form-group">
+      <label for="username">Usuario:</label>
+      <input id="username" name="username" [(ngModel)]="username" required class="input-field">
+    </div>
+    <div class="form-group password-group">
+      <label for="password">Contraseña:</label>
+      <input id="password" name="password" [type]="mostrarPassword ? 'text' : 'password'" [(ngModel)]="password" required class="input-field password-input">
+      <button type="button" (click)="mostrarPassword = !mostrarPassword" tabindex="-1" class="toggle-password-btn">
+        <svg [attr.fill]="mostrarPassword ? '#3A86FF' : '#6C757D'" width="20" height="20" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="5.5" stroke="#3A86FF" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="2.5"/></svg>
+      </button>
+    </div>
+    <div class="form-group">
+      <label for="email">Correo de verificación:</label>
+      <input id="email" name="email" [(ngModel)]="email" type="email" class="input-field">
+    </div>
+    <div class="form-group">
+      <label for="captcha">Captcha:</label>
+      <div class="captcha-box">{{ captchaPregunta }}</div>
+      <input id="captcha" name="captcha" [(ngModel)]="captcha" autocomplete="off" class="input-field">
+      <button type="button" (click)="generarCaptcha()" class="captcha-btn">Nuevo captcha</button>
+    </div>
+    <button type="submit" [disabled]="loginForm.invalid" class="main-btn">Entrar</button>
+  </form>
+  <form *ngIf="mostrarToken" (ngSubmit)="verificarToken()" #tokenForm="ngForm" class="login-form">
+    <div class="form-group">
+      <label for="token">Token de verificación:</label>
+      <input id="token" name="token" [(ngModel)]="token" required class="input-field">
+    </div>
+    <button type="submit" [disabled]="tokenForm.invalid" class="main-btn">Verificar e ingresar</button>
+  </form>
+  <div class="forgot-password-link">
+    <button type="button" (click)="onForgotPassword()">Olvidé mi contraseña</button>
+  </div>
+  <div class="volver-link">
+    <button type="button" routerLink="/">Volver</button>
+  </div>
+  <p class="login-error">{{ mensaje }}</p>
+</div>

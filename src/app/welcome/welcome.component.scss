@@ -1,0 +1,93 @@
+// Paleta de colores
+$color-primario: #0D3B66;
+$color-secundario: #3A86FF;
+$color-acento: #4CAF50;
+$color-neutro-claro: #F5F5F5;
+$color-neutro-oscuro: #6C757D;
+
+.welcome-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-neutro-claro;
+}
+
+.welcome-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0002;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-title {
+  color: $color-primario;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.welcome-desc {
+  color: $color-neutro-oscuro;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-btns {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.main-btn {
+  background: $color-primario;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: $color-secundario;
+  }
+}
+
+.accent-btn {
+  background: $color-acento;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: darken($color-acento, 10%);
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-card {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .welcome-title {
+    font-size: 1.3rem;
+  }
+  .main-btn, .accent-btn {
+    font-size: 1rem;
+    padding: 0.7rem 1.2rem;
+  }
+}

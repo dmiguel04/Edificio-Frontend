@@ -1,0 +1,53 @@
+<div class="register-container">
+  <h2 class="register-title">Registro de usuario</h2>
+  <form (ngSubmit)="register()" #registerForm="ngForm" class="register-form">
+    <div class="form-group">
+      <label>Nombre:</label>
+      <input name="nombre" [(ngModel)]="nombre" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>Apellido:</label>
+      <input name="apellido" [(ngModel)]="apellido" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>CI:</label>
+      <input name="ci" [(ngModel)]="ci" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>Email:</label>
+      <input name="email" type="email" [(ngModel)]="email" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>Sexo:</label>
+      <select name="sexo" [(ngModel)]="sexo" required class="input-field">
+        <option value="">Seleccione</option>
+        <option value="M">Masculino</option>
+        <option value="F">Femenino</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Teléfono:</label>
+      <input name="telefono" [(ngModel)]="telefono" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>Fecha de nacimiento:</label>
+      <input name="fecha_nacimiento" type="date" [(ngModel)]="fecha_nacimiento" required class="input-field">
+    </div>
+    <div class="form-group">
+      <label>Usuario:</label>
+      <input name="username" [(ngModel)]="username" required class="input-field">
+    </div>
+    <div class="form-group password-group">
+      <label>Contraseña:</label>
+      <input name="password" [type]="mostrarPassword ? 'text' : 'password'" [(ngModel)]="password" required class="input-field password-input">
+      <button type="button" (click)="mostrarPassword = !mostrarPassword" tabindex="-1" class="toggle-password-btn">
+        <svg [attr.fill]="mostrarPassword ? '#3A86FF' : '#6C757D'" width="20" height="20" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="5.5" stroke="#3A86FF" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="2.5"/></svg>
+      </button>
+    </div>
+    <button type="submit" [disabled]="registerForm.invalid" class="main-btn">Registrarse</button>
+  </form>
+  <div class="volver-link">
+    <button type="button" routerLink="/">Volver</button>
+  </div>
+  <p class="register-error">{{ mensaje }}</p>
+</div>
