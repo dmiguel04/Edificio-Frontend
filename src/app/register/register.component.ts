@@ -3,55 +3,67 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
-import { RouterModule } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  // Variables para los campos del formulario
-  nombre = '';
-  apellido = '';
-  ci = '';
-  email = '';
-  sexo = '';
-  telefono = '';
-  fecha_nacimiento = '';
+  persona = {
+    nombre: '',
+    apellido: '',
+    ci: '',
+    email: '',
+    sexo: '',
+    telefono: '',
+    fecha_nacimiento: ''
+  };
   username = '';
   password = '';
   mensaje = '';
+  error = '';
   mostrarPassword = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
 
-  register() {
-    const data = {
-      persona: {
-        nombre: this.nombre,
-        apellido: this.apellido,
-        ci: this.ci,
-        email: this.email,
-        sexo: this.sexo,
-        telefono: this.telefono,
-        fecha_nacimiento: this.fecha_nacimiento
-      },
+  registrar() {
+    this.mensaje = '';
+    this.error = '';
+    const body = {
+      persona: this.persona,
       username: this.username,
       password: this.password
     };
-
-    this.auth.register(data).subscribe({
-      next: (res) => {
-        this.mensaje = 'Registro exitoso';
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1200);
+    this.http.post('http://localhost:8000/api/usuarios/register/', body).subscribe({
+      next: (res: any) => {
+        this.mensaje = 'Usuario registrado correctamente';
+        this.error = '';
+        // Redirigir o limpiar formulario si lo deseas
       },
-      error: (err) => {
-        this.mensaje = err.error?.message || 'Error en registro';
+      error: (err: HttpErrorResponse) => {
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            this.error = err.error;
+          } else if (typeof err.error === 'object') {
+            // Muestra el primer mensaje de error del backend
+            const firstKey = Object.keys(err.error)[0];
+            this.error = Array.isArray(err.error[firstKey])
+              ? err.error[firstKey][0]
+              : err.error[firstKey];
+          } else {
+            this.error = 'Error en registro';
+          }
+        } else {
+          this.error = 'Error en registro';
+        }
       }
     });
   }
