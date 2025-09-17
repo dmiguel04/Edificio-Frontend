@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:edificiofrontend": "node dist/edificiofrontend/server/server.mjs"
+    "build:ssr": "ng build && ng run edificiofrontend:server",
+    "serve:ssr": "node dist/edificiofrontend/server/server.mjs",
+    "dev:ssr": "ng run edificiofrontend:serve-ssr"
   },
   "private": true,
   "dependencies": {
@@ -26,6 +28,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^20.3.1",
     "@angular/build": "^20.3.1",
     "@angular/cli": "^20.3.1",
     "@angular/compiler-cli": "^20.3.0",

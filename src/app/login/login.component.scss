@@ -1,9 +1,68 @@
-// Paleta de colores
+.auditoria-btn {
+	color: #fff;
+	text-decoration: none;
+	background: #388e3c;
+	padding: 0.4rem 1.2rem;
+	border-radius: 6px;
+	font-weight: bold;
+	box-shadow: 0 2px 8px #0002;
+	transition: background 0.2s;
+	margin-left: 0.5rem;
+	cursor: pointer;
+	display: inline-block;
+}
+.auditoria-btn:hover {
+	background: #2e7d32;
+}
+.qr-modal {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.qr-modal-content {
+	background: #fff;
+	padding: 2rem 2.5rem;
+	border-radius: 12px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+	position: relative;
+	z-index: 1001;
+	max-width: 350px;
+	width: 100%;
+	text-align: center;
+}
+.qr-modal-backdrop {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(0,0,0,0.25);
+	z-index: 1000;
+}
 $color-primario: #0D3B66;
 $color-secundario: #3A86FF;
 $color-acento: #4CAF50;
 $color-neutro-claro: #F5F5F5;
 $color-neutro-oscuro: #6C757D;
+$color-primario: #0D3B66;
+$color-secundario: #3A86FF;
+$color-acento: #4CAF50;
+$color-neutro-claro: #F5F5F5;
+$color-neutro-oscuro: #6C757D;
+
+.volver-btn {
+	display: inline-block;
+	background: none;
+	border: none;
+	color: $color-secundario;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 1rem;
+	padding: 0;
+	&:hover {
+		color: $color-primario;
+	}
+}
 .volver-link {
 	text-align: center;
 	margin-top: 0.7rem;

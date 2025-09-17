@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -11,20 +11,32 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
+
 export class LoginComponent {
+  mostrarQR: boolean = false;
+  qrImageUrl: string = '';
+  tokenCorreo: string = '';
+  verificarEstadoCuenta() {
+    // Método agregado para evitar error de compilación. Implementa la lógica si es necesario.
+  }
+  token: string = '';
+  codigo2FA: string = '';
   mostrarPassword = false;
-  username = '';
-  password = '';
-  email = '';
-  captcha = '';
-  mensaje = '';
-  captchaPregunta = '';
-  captchaRespuesta = '';
-  token = '';
-  mostrarToken = false;
-  credencialesGuardadas: any = null;
+  username: string = '';
+  password: string = '';
+  email: string = '';
+  captcha: string = '';
+  mensaje: string = '';
+  captchaPregunta: string = '';
+  captchaRespuesta: string = '';
+  mostrarTokenCorreo: boolean = false;
+  mostrarToken2FA: boolean = false;
+  credencialesGuardadas: { username: string; password: string } | null = null;
+  error: string = '';
+  estadoCuenta: string = '';
+  estadoCuentaColor: string = '#388e3c'; // Verde por defecto
 
   constructor(
     private auth: AuthService,
@@ -52,43 +64,133 @@ export class LoginComponent {
       return;
     }
 
-    this.http.post('http://localhost:8000/api/usuarios/login/', {
-      username: this.username,
-      password: this.password
-    }).subscribe({
-      next: (res: any) => {
-        this.credencialesGuardadas = { username: this.username, password: this.password };
-        this.mostrarToken = true;
-        this.mensaje = 'Se ha enviado un token a tu correo. Ingresa el token para continuar.';
+    this.mensaje = '';
+    this.error = '';
+    if (!this.username || !this.password) {
+      this.error = 'Usuario y contraseña requeridos';
+      return;
+    }
+
+    // Primero, intentar verificar si la cuenta está bloqueada, pero si da error 404, continuar con login normal
+    this.auth.checkAccountStatus(this.username).subscribe({
+      next: (status: any) => {
+        if (status.account_locked_until) {
+          this.error = `Cuenta bloqueada hasta ${status.account_locked_until}`;
+          return;
+        }
+        this.realizarLoginAvanzado();
       },
       error: (err) => {
-        const errorMsg = (err.error && (typeof err.error === 'string' ? err.error : JSON.stringify(err.error))) || 'Error en login.';
-        this.mensaje = errorMsg;
-        this.generarCaptcha();
+        if (err.status === 404) {
+          // Si el endpoint no existe, continuar con login normal
+          this.realizarLoginAvanzado();
+        } else {
+          this.error = err.error?.error || 'Error verificando estado de cuenta';
+        }
       }
     });
   }
 
-  verificarToken() {
-    if (!this.token) {
+  realizarLoginAvanzado() {
+    // Paso 1: login normal
+    this.auth.loginWithUserPassAdvanced(this.username, this.password).subscribe({
+      next: (res: any) => {
+        console.log('Respuesta login:', res);
+        if (res.access && res.refresh) {
+          localStorage.setItem('access', res.access);
+          localStorage.setItem('refresh', res.refresh);
+          this.router.navigate(['/dashboard']);
+          return;
+        }
+        if (res.msg && res.username) {
+          this.mostrarTokenCorreo = true;
+          this.mostrarToken2FA = false;
+          this.credencialesGuardadas = { username: this.username, password: this.password };
+          this.mensaje = res.msg;
+          return;
+        }
+        if (res.require_2fa) {
+          this.mostrarTokenCorreo = false;
+          this.mostrarToken2FA = true;
+          this.credencialesGuardadas = { username: this.username, password: this.password };
+          this.mensaje = 'Ingresa el código 2FA.';
+          return;
+        }
+        if (res.error) {
+          this.error = res.error;
+          return;
+        }
+        this.error = 'Respuesta inesperada del servidor';
+      },
+      error: (err) => {
+        this.error = err.error?.error || 'Error en login';
+      }
+    });
+}
+
+  verificarTokenCorreo() {
+    if (!this.tokenCorreo) {
       this.mensaje = 'Por favor ingresa el token.';
       return;
     }
-    // Llama al endpoint para validar el token
-    this.http.post('http://localhost:8000/api/usuarios/validate-login-token/', {
-      username: this.credencialesGuardadas.username,
-      token: this.token
-    }).subscribe({
+    if (!this.credencialesGuardadas) {
+      this.mensaje = 'No hay credenciales guardadas para validar el token.';
+      return;
+    }
+    this.auth.validateTokenCorreo(this.credencialesGuardadas.username, this.tokenCorreo).subscribe({
       next: (res: any) => {
-        this.mensaje = 'Login exitoso';
-        this.mostrarToken = false;
-        // Aquí puedes guardar el JWT si lo necesitas
-        setTimeout(() => {
+        if (res.require_2fa) {
+          this.mostrarTokenCorreo = false;
+          this.mostrarToken2FA = true;
+          this.mensaje = 'Ingresa el código 2FA de tu app.';
+        } else if (res.qr_url) {
+          this.mostrarTokenCorreo = false;
+          this.mostrarQR = true;
+          this.qrImageUrl = res.qr_url;
+          this.mensaje = 'Escanea el QR y luego ingresa el código 2FA.';
+        } else if (res.access) {
+          localStorage.setItem('access', res.access);
+          localStorage.setItem('refresh', res.refresh);
+          this.mensaje = 'Login exitoso';
+          this.error = '';
           this.router.navigate(['/dashboard']);
-        }, 800);
+        } else {
+          this.error = res.error || 'Respuesta inesperada del servidor';
+        }
       },
       error: (err) => {
-        this.mensaje = (err.error && (typeof err.error === 'string' ? err.error : JSON.stringify(err.error))) || 'Token inválido o error en login.';
+        this.error = err.error?.error || 'Token inválido o error en login.';
+      }
+    });
+  }
+
+  verificarCodigo2FA() {
+    if (!this.codigo2FA) {
+      this.mensaje = 'Por favor ingresa el código 2FA.';
+      return;
+    }
+    if (!this.credencialesGuardadas) {
+      this.mensaje = 'No hay credenciales guardadas para validar el código.';
+      return;
+    }
+    const payload = {
+      username: this.credencialesGuardadas.username,
+      code: this.codigo2FA
+    };
+    this.auth.validateCodigo2FA(payload).subscribe({
+      next: (res: any) => {
+        if (res.access) {
+          localStorage.setItem('access', res.access);
+          localStorage.setItem('refresh', res.refresh);
+          this.mensaje = 'Login exitoso';
+          this.error = '';
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.error = res.error || 'Código 2FA incorrecto.';
+        }
+      },
+      error: (err) => {
+        this.error = err.error?.error || 'Código 2FA incorrecto.';
       }
     });
   }

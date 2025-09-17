@@ -1,9 +1,27 @@
-// Paleta de colores
 $color-primario: #0D3B66;
 $color-secundario: #3A86FF;
 $color-acento: #4CAF50;
 $color-neutro-claro: #F5F5F5;
 $color-neutro-oscuro: #6C757D;
+$color-primario: #0D3B66;
+$color-secundario: #3A86FF;
+$color-acento: #4CAF50;
+$color-neutro-claro: #F5F5F5;
+$color-neutro-oscuro: #6C757D;
+
+.volver-btn {
+	display: inline-block;
+	background: none;
+	border: none;
+	color: $color-secundario;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 1rem;
+	padding: 0;
+	&:hover {
+		color: $color-primario;
+	}
+}
 .volver-link {
 	text-align: center;
 	margin-top: 0.7rem;

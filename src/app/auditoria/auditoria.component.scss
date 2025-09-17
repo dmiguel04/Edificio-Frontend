@@ -1,0 +1,32 @@
+.auditoria-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0002;
+  padding: 2rem 2.5rem;
+}
+.auditoria-container h2 {
+  color: #1976d2;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.auditoria-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.auditoria-table th, .auditoria-table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+}
+.auditoria-table th {
+  background: #f5f5f5;
+  color: #1976d2;
+}
+.no-logs {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+}

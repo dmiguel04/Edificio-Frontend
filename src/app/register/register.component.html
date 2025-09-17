@@ -47,7 +47,7 @@
     <button type="submit" [disabled]="registerForm.invalid" class="main-btn">Registrarse</button>
   </form>
   <div class="volver-link">
-    <button type="button" routerLink="/">Volver</button>
+    <button type="button" (click)="onVolver()" class="volver-btn">Volver</button>
   </div>
   <p class="register-success" *ngIf="mensaje" style="color: green;">{{ mensaje }}</p>
   <p class="register-error" *ngIf="error" style="color: red;">{{ error }}</p>

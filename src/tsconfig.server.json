@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "outDir": "../dist/edificiofrontend-server",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "target": "ES2022"
+  },
+  "files": [
+    "main.server.ts"
+  ]
+}

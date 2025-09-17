@@ -1,13 +1,1 @@
-<div *ngIf="router.url === '/'" class="welcome-container">
-  <div class="welcome-card">
-    <h1 class="welcome-title">¡Bienvenido a EdificioApp!</h1>
-    <p class="welcome-desc">Gestiona tu edificio de forma fácil y segura.<br>Por favor, inicia sesión o regístrate para continuar.</p>
-    <div class="welcome-btns">
-      <button class="main-btn" routerLink="/login">Login</button>
-      <button class="accent-btn" routerLink="/register">Registrarse</button>
-    </div>
-  </div>
-</div>
-<div class="main-router">
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>
