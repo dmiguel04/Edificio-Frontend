@@ -1,59 +1,88 @@
+
 # Edificiofrontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.16.
+Frontend robusto para gestión de edificio, construido con Angular 20 y SSR (Server Side Rendering). Incluye autenticación multi-paso, protección de rutas, auditoría de accesos, logout seguro y automatización de build/serve.
 
-## Development server
+---
 
-To start a local development server, run:
+## Características principales
+
+- **SSR (Server Side Rendering)**: Renderizado del frontend en servidor para mejor SEO y performance.
+- **Autenticación avanzada**: Login multi-paso (token por email, 2FA, QR para activar 2FA), bloqueo/desbloqueo de cuenta en tiempo real.
+- **Protección de rutas**: Solo usuarios autenticados pueden acceder a dashboard, perfil y auditoría (AuthGuard).
+- **Logout seguro**: Blacklisting del refresh token en backend y limpieza local.
+- **Auditoría**: Visualización de logs de acceso y acciones, con auto-refresh.
+- **Automatización de build y serve**: Cambios en el código reinician y reconstruyen el servidor automáticamente con `npm run dev:server`.
+
+---
+
+
+## Servidor de desarrollo (SSR)
+
+Para desarrollo SSR con recarga automática:
+
+```bash
+npm run dev:server
+```
+
+Esto observará cambios y reconstruirá/levantará el servidor SSR en `http://localhost:4000/`.
+
+Para desarrollo clásico (SPA):
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abre tu navegador en `http://localhost:4200/`.
 
-## Code scaffolding
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Estructura y módulos clave
 
-```bash
-ng generate component component-name
-```
+- `src/app/services/auth.service.ts`: Lógica de login, 2FA, validación de tokens, logout seguro.
+- `src/app/guards/auth.guard.ts`: Protección de rutas.
+- `src/app/dashboard/dashboard.component.ts`: Dashboard principal, navegación y logout.
+- `src/app/auditoria/auditoria.component.ts`: Visualización de logs de auditoría, botón volver.
+- `src/app/app.routes.ts`: Definición de rutas y guards.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
+## Build de producción
 
-## Building
-
-To build the project run:
+Para compilar el proyecto:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Para build SSR:
 
-## Running unit tests
+```bash
+npm run build:ssr
+```
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+
+## Tests
+
+Para ejecutar tests unitarios:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
+## Otros comandos útiles
 
-```bash
-ng e2e
-```
+- `npm run build:ssr`: Compila el frontend y el servidor SSR.
+- `npm run serve:ssr`: Sirve la app SSR (requiere build previo).
+- `npm run dev:server`: Build y serve SSR automáticos con nodemon.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
+## Recursos adicionales
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli)
+- [Documentación oficial Angular](https://angular.dev/)
+
+---
+
+### Autor y contacto
+
+Proyecto desarrollado por dmiguel04. Para dudas o soporte, contacta al autor.
