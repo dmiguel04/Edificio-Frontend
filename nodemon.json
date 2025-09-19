@@ -1,0 +1,12 @@
+{
+  "watch": [
+    "src",
+    "angular.json",
+    "package.json"
+  ],
+  "ext": "ts,js,json,html,scss",
+  "ignore": [
+    "node_modules"
+  ],
+  "exec": "npm run build:ssr && npm run serve:ssr"
+}
