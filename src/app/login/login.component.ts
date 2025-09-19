@@ -18,8 +18,45 @@ export class LoginComponent {
   mostrarQR: boolean = false;
   qrImageUrl: string = '';
   tokenCorreo: string = '';
+  private estadoCuentaInterval: any;
+
   verificarEstadoCuenta() {
-    // Método agregado para evitar error de compilación. Implementa la lógica si es necesario.
+    if (!this.username) {
+      this.estadoCuenta = '';
+      return;
+    }
+    this.auth.checkAccountStatus(this.username).subscribe({
+      next: (status: any) => {
+        if (status.account_locked_until) {
+          this.estadoCuenta = `Cuenta bloqueada hasta ${status.account_locked_until}`;
+          this.estadoCuentaColor = '#c62828';
+          // Si ya hay un intervalo, no crear otro
+          if (!this.estadoCuentaInterval) {
+            this.estadoCuentaInterval = setInterval(() => this.verificarEstadoCuenta(), 5000);
+          }
+        } else {
+          this.estadoCuenta = '';
+          this.estadoCuentaColor = '#388e3c';
+          if (this.estadoCuentaInterval) {
+            clearInterval(this.estadoCuentaInterval);
+            this.estadoCuentaInterval = null;
+          }
+        }
+      },
+      error: () => {
+        this.estadoCuenta = '';
+        this.estadoCuentaColor = '#388e3c';
+        if (this.estadoCuentaInterval) {
+          clearInterval(this.estadoCuentaInterval);
+          this.estadoCuentaInterval = null;
+        }
+      }
+    });
+  }
+  ngOnDestroy() {
+    if (this.estadoCuentaInterval) {
+      clearInterval(this.estadoCuentaInterval);
+    }
   }
   token: string = '';
   codigo2FA: string = '';
@@ -71,22 +108,22 @@ export class LoginComponent {
       return;
     }
 
-    // Primero, intentar verificar si la cuenta está bloqueada, pero si da error 404, continuar con login normal
+    // Consultar estado antes de login y refrescar mensaje, pero permitir siempre el login
     this.auth.checkAccountStatus(this.username).subscribe({
       next: (status: any) => {
         if (status.account_locked_until) {
-          this.error = `Cuenta bloqueada hasta ${status.account_locked_until}`;
-          return;
+          this.estadoCuenta = `Cuenta bloqueada hasta ${status.account_locked_until}`;
+          this.estadoCuentaColor = '#c62828';
+        } else {
+          this.estadoCuenta = '';
+          this.estadoCuentaColor = '#388e3c';
         }
         this.realizarLoginAvanzado();
       },
-      error: (err) => {
-        if (err.status === 404) {
-          // Si el endpoint no existe, continuar con login normal
-          this.realizarLoginAvanzado();
-        } else {
-          this.error = err.error?.error || 'Error verificando estado de cuenta';
-        }
+      error: () => {
+        this.estadoCuenta = '';
+        this.estadoCuentaColor = '#388e3c';
+        this.realizarLoginAvanzado();
       }
     });
   }

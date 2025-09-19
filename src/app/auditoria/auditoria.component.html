@@ -1,0 +1,25 @@
+<div class="auditoria-container">
+  <button (click)="goToDashboard()" style="margin-bottom:1.5rem; background:#1976d2; color:#fff; border:none; border-radius:5px; padding:0.5rem 1.2rem; font-weight:bold; cursor:pointer;">Volver</button>
+  <h2>Auditoría de accesos y acciones</h2>
+  <table *ngIf="logs.length > 0" class="auditoria-table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>IP</th>
+        <th>Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let log of logs">
+        <td>{{ log.fecha | date:'short' }}</td>
+        <td>{{ log.username }}</td>
+        <td>{{ log.evento }}</td>
+        <td>{{ log.ip }}</td>
+        <td>{{ log.detalle }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="logs.length === 0" class="no-logs">No hay registros de auditoría.</div>
+</div>

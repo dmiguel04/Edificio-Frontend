@@ -13,11 +13,32 @@ export class AuthService {
   /**
    * Logout: elimina tokens y (opcional) notifica al backend para blacklisting
    */
-  logout(): void {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    // Si tienes endpoint de logout para blacklisting:
-    // this.http.post(`${this.apiUrl}/logout/`, { refresh: localStorage.getItem('refresh') }).subscribe();
+  /**
+   * Logout seguro: notifica al backend para blacklisting del refresh token y limpia el almacenamiento local
+   * Devuelve un observable que completa cuando el proceso termina (éxito o error)
+   */
+  logout(): Observable<any> {
+    const refresh = localStorage.getItem('refresh');
+    const access = localStorage.getItem('access');
+    const headers: { [header: string]: string } = {};
+    if (access) headers['Authorization'] = `Bearer ${access}`;
+    return this.http.post(
+      `${this.apiUrl}/logout/`,
+      { refresh },
+      { headers }
+    ).pipe(
+      tap({
+        next: () => {
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
+        },
+        error: () => {
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
+        }
+      })
+    );
+  // ...existing code...
   }
   /**
    * Valida el token recibido por correo

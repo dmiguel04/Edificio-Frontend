@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
@@ -15,8 +16,8 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'perfil', component: PerfilComponent },
-  { path: 'auditoria', component: AuditoriaComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
+  { path: 'auditoria', component: AuditoriaComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
