@@ -46,32 +46,17 @@ export class RegisterComponent implements OnDestroy {
     };
     this.auth.register(body).subscribe({
       next: (res: any) => {
-        this.mensaje = 'Usuario registrado correctamente';
+        this.mensaje = res.message || 'Usuario registrado correctamente';
         this.error = '';
-        // Login automático tras registro
-        this.auth.loginWithUserPass(this.username, this.password).subscribe({
-          next: (loginRes: any) => {
-            if (loginRes.token) {
-              this.auth.validateToken(this.username, loginRes.token).subscribe({
-                next: () => {
-                  this.router.navigate(['/dashboard']);
-                },
-                error: () => {
-                  this.router.navigate(['/login']);
-                }
-              });
-            } else if (loginRes.access) {
-              localStorage.setItem('access', loginRes.access);
-              localStorage.setItem('refresh', loginRes.refresh);
-              this.router.navigate(['/dashboard']);
-            } else {
-              this.router.navigate(['/login']);
-            }
-          },
-          error: () => {
-            this.router.navigate(['/login']);
-          }
-        });
+        
+        // Redirigir a verificación de email después de 3 segundos
+        this.loginTimeout = setTimeout(() => {
+          this.router.navigate(['/verify-email'], { 
+            queryParams: { 
+              email: this.persona.email 
+            } 
+          });
+        }, 3000);
       },
       error: (err: HttpErrorResponse) => {
         if (err.error) {

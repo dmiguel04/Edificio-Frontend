@@ -55,6 +55,53 @@ $color-neutro-oscuro: #6C757D;
   font-size: 1.1rem;
 }
 
+.actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.btn-primary {
+  background: $color-secundario;
+  color: white;
+  &:hover {
+    background: darken($color-secundario, 10%);
+  }
+}
+
+.btn-secondary {
+  background: $color-neutro-oscuro;
+  color: white;
+  &:hover {
+    background: darken($color-neutro-oscuro, 10%);
+  }
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+  &:hover {
+    background: darken(#dc3545, 10%);
+  }
+}
+
+
+
+
+
 @media (max-width: 600px) {
   .dashboard-container {
     max-width: 98vw;

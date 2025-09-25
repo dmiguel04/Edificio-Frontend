@@ -49,6 +49,21 @@
   <div class="volver-link">
     <button type="button" (click)="onVolver()" class="volver-btn">Volver</button>
   </div>
-  <p class="register-success" *ngIf="mensaje" style="color: green;">{{ mensaje }}</p>
-  <p class="register-error" *ngIf="error" style="color: red;">{{ error }}</p>
+  <div class="alert success" *ngIf="mensaje">
+    <div class="alert-content">
+      <h4>¡Registro exitoso!</h4>
+      <p>{{ mensaje }}</p>
+      <p><strong>Email enviado a:</strong> {{ persona.email }}</p>
+      <p class="redirect-info">
+        <span class="spinner"></span>
+        Redirigiendo a verificación de email en 3 segundos...
+      </p>
+    </div>
+  </div>
+  <div class="alert error" *ngIf="error">
+    <div class="alert-content">
+      <h4>Error en el registro</h4>
+      <p>{{ error }}</p>
+    </div>
+  </div>
 </div>

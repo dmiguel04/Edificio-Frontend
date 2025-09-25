@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./login.component.scss']
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   mostrarQR: boolean = false;
   qrImageUrl: string = '';
   tokenCorreo: string = '';
@@ -74,13 +74,28 @@ export class LoginComponent {
   error: string = '';
   estadoCuenta: string = '';
   estadoCuentaColor: string = '#388e3c'; // Verde por defecto
+  returnUrl: string = '/dashboard';
+  loginMessage: string = '';
 
   constructor(
     private auth: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private http: HttpClient
   ) {
     this.generarCaptcha();
+  }
+
+  ngOnInit() {
+    // Obtener URL de retorno y mensaje de los query params
+    this.route.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl'] || '/dashboard';
+      this.loginMessage = params['message'] || '';
+      
+      if (this.loginMessage) {
+        this.mensaje = this.loginMessage;
+      }
+    });
   }
 
   generarCaptcha() {
@@ -129,6 +144,12 @@ export class LoginComponent {
   }
 
   realizarLoginAvanzado() {
+    console.log('=== LOGIN COMPONENT DEBUG ===');
+    console.log('Username:', this.username);
+    console.log('Password length:', this.password ? this.password.length : 0);
+    console.log('Captcha:', this.captcha);
+    console.log('Captcha respuesta:', this.captchaRespuesta);
+    
     // Paso 1: login normal
     this.auth.loginWithUserPassAdvanced(this.username, this.password).subscribe({
       next: (res: any) => {
@@ -136,7 +157,7 @@ export class LoginComponent {
         if (res.access && res.refresh) {
           localStorage.setItem('access', res.access);
           localStorage.setItem('refresh', res.refresh);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([this.returnUrl]);
           return;
         }
         if (res.msg && res.username) {
@@ -160,7 +181,13 @@ export class LoginComponent {
         this.error = 'Respuesta inesperada del servidor';
       },
       error: (err) => {
-        this.error = err.error?.error || 'Error en login';
+        console.error('=== LOGIN ERROR DEBUG ===');
+        console.error('Full error object:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.message);
+        console.error('Error body:', err.error);
+        
+        this.error = err.error?.error || err.error?.message || `Error ${err.status}: ${err.statusText}` || 'Error en login';
       }
     });
 }
@@ -190,7 +217,7 @@ export class LoginComponent {
           localStorage.setItem('refresh', res.refresh);
           this.mensaje = 'Login exitoso';
           this.error = '';
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([this.returnUrl]);
         } else {
           this.error = res.error || 'Respuesta inesperada del servidor';
         }
@@ -221,7 +248,7 @@ export class LoginComponent {
           localStorage.setItem('refresh', res.refresh);
           this.mensaje = 'Login exitoso';
           this.error = '';
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([this.returnUrl]);
         } else {
           this.error = res.error || 'Código 2FA incorrecto.';
         }

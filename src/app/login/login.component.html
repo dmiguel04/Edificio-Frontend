@@ -19,6 +19,12 @@
   </div>
 <div class="login-container">
   <h2 class="login-title">Iniciar sesión</h2>
+  
+  <!-- Mensaje informativo del sistema -->
+  <div *ngIf="loginMessage" class="system-message" [ngClass]="{'info': !error, 'error': error}">
+    {{ loginMessage }}
+  </div>
+  
   <form *ngIf="!mostrarTokenCorreo && !mostrarToken2FA" (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
     <div class="form-group">
       <label for="username">Usuario:</label>

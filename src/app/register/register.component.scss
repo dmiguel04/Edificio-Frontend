@@ -149,6 +149,84 @@ $color-neutro-oscuro: #6C757D;
 	margin-top: 1rem;
 }
 
+// Estilos para alertas mejoradas
+.alert {
+	margin: 20px 0;
+	padding: 20px;
+	border-radius: 8px;
+	border-left: 4px solid;
+	animation: slideIn 0.5s ease-out;
+
+	&.success {
+		background-color: #d4edda;
+		border-left-color: #28a745;
+		color: #155724;
+
+		.alert-content h4 {
+			color: #155724;
+			margin: 0 0 10px 0;
+			font-size: 1.1rem;
+		}
+
+		.spinner {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			border: 2px solid #155724;
+			border-top: 2px solid transparent;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin-right: 8px;
+		}
+
+		.redirect-info {
+			font-style: italic;
+			font-size: 0.9rem;
+			margin-top: 10px;
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	&.error {
+		background-color: #f8d7da;
+		border-left-color: #dc3545;
+		color: #721c24;
+
+		.alert-content h4 {
+			color: #721c24;
+			margin: 0 0 10px 0;
+			font-size: 1.1rem;
+		}
+	}
+
+	.alert-content {
+		p {
+			margin: 5px 0;
+		}
+
+		strong {
+			font-weight: 600;
+		}
+	}
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
 @media (max-width: 600px) {
 	.register-container {
 		max-width: 98vw;
@@ -163,5 +241,14 @@ $color-neutro-oscuro: #6C757D;
 	.main-btn {
 		font-size: 0.98rem;
 		padding: 0.6rem;
+	}
+
+	.alert {
+		margin: 15px 0;
+		padding: 15px;
+		
+		.alert-content h4 {
+			font-size: 1rem;
+		}
 	}
 }

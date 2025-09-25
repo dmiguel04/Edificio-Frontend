@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
       <span style="font-weight:bold; letter-spacing:1px;">MiApp</span>
       <a href="#" style="color:white; text-decoration:none;">Inicio</a>
       <a routerLink="/perfil" style="color:white; text-decoration:none;">Perfil</a>
-  <button (click)="goToAuditoria()" style="background:#fff; color:#1976d2; border:none; border-radius:5px; padding:0.5rem 1.2rem; font-weight:bold; cursor:pointer; transition:background 0.2s;">Auditoría</button>
+      <button (click)="goToAuditoria()" style="background:#fff; color:#1976d2; border:none; border-radius:5px; padding:0.5rem 1.2rem; font-weight:bold; cursor:pointer; transition:background 0.2s;">Auditoría</button>
       <a href="#" style="color:white; text-decoration:none;" (click)="logout()">Cerrar sesión</a>
     </nav>
     <div style="max-width: 600px; margin: 3rem auto; padding: 2rem; border-radius: 12px; background: #fff; color: #222; box-shadow: 0 2px 12px #0002; text-align:center;">
@@ -20,15 +20,49 @@ import { AuthService } from '../services/auth.service';
   `
 })
 export class DashboardComponent {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  goToPerfil() {
+    this.router.navigate(['/perfil']);
+  }
+
   goToAuditoria() {
     this.router.navigate(['/auditoria']);
   }
-  constructor(private auth: AuthService, private router: Router) {}
 
   logout() {
+    console.log('🚪 LOGOUT ULTRA-RÁPIDO ANTI-BROKEN-PIPE');
+    
+    // Timeout ultra-agresivo para evitar cualquier cuelgue
+    const ultraTimeout = setTimeout(() => {
+      console.log('⚡ Ultra-timeout activado - Redirección inmediata');
+      this.router.navigate(['/login']);
+    }, 600); // Solo 600ms para evitar broken pipes
+    
     this.auth.logout().subscribe({
-      next: () => this.router.navigate(['/login']),
-      error: () => this.router.navigate(['/login']) // Redirige aunque falle el backend
+      next: (response: any) => {
+        clearTimeout(ultraTimeout);
+        console.log('✅ Logout completado sin broken pipes:', response);
+        
+        // Log del método usado
+        if (response.method) {
+          console.log(`🎯 Método de logout: ${response.method}`);
+        }
+        
+        // Si hay error de backend pero logout local exitoso, es normal
+        if (response.backend_error) {
+          console.log('ℹ️ Backend tuvo problemas pero logout local exitoso (esperado)');
+        }
+        
+        // Redirección inmediata
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        // Este bloque NO debería ejecutarse nunca con la nueva implementación
+        clearTimeout(ultraTimeout);
+        console.log('🚨 Error inesperado en logout ultra-optimizado:', error);
+        this.router.navigate(['/login']);
+      }
     });
   }
 }
