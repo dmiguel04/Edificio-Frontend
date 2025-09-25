@@ -44,11 +44,13 @@ export class AuthService {
     
     console.log('� Notificación express al backend (anti-broken-pipe)...');
     
-    // 3. Headers optimizados para CORS y anti-broken-pipe
+    // 3. Headers ultra-agresivos para evitar broken pipe
     const headers = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
-      // Removidos headers que pueden causar problemas de CORS
+      'Connection': 'close',
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Keep-Alive': 'timeout=1'
     };
     
     // 4. Solo refresh token (mínimo payload)
@@ -66,28 +68,16 @@ export class AuthService {
         console.log(`🎯 HTTP Status: ${httpResponse.status}, Backend Status: ${response?.status}`);
       }),
       catchError((error) => {
-        console.warn('⚠️ Backend error (NORMAL - logout ya completado):', error.message);
-        
-        // Identificar tipo de error específico
-        let errorType = 'unknown';
-        if (error.name === 'TimeoutError') {
-          errorType = 'timeout';
-        } else if (error.message && error.message.includes('CORS')) {
-          errorType = 'cors';
-          console.log('ℹ️ Error CORS detectado - común en desarrollo, logout local exitoso');
-        } else if (error.status === 0) {
-          errorType = 'network_or_cors';
-          console.log('ℹ️ Error de red/CORS (status 0) - logout local exitoso');
-        }
+        console.warn('⚠️ Backend timeout/error (NORMAL - logout ya completado):', error.message);
         
         // IMPORTANTE: El logout YA está completado localmente
+        // Cualquier error del backend es irrelevante para el usuario
         return of({ 
           msg: 'Logout exitoso',
           status: 'success',
-          method: 'local_with_backend_error',
-          backend_error: errorType,
-          error_details: error.message,
-          note: 'Logout completado exitosamente (error de backend/CORS ignorado)'
+          method: 'local_with_backend_notification_failed',
+          backend_error: error.name,
+          note: 'Logout completado exitosamente (error de backend ignorado)'
         });
       }),
       // Mapear respuesta HTTP a respuesta simple
