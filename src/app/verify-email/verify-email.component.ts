@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-verify-email',
@@ -25,11 +25,19 @@ export class VerifyEmailComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: any
   ) {
     this.verifyForm = this.fb.group({
       codigo: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
     });
+  }
+
+  // platform id for SSR checks
+  constructorPlatformIdInjected: any;
+
+  ngAfterContentInit() {
+    // noop placeholder to satisfy lifecycle ordering when PLATFORM_ID is injected via constructor below
   }
 
   ngOnInit() {
@@ -41,13 +49,15 @@ export class VerifyEmailComponent implements OnInit {
       }
     });
 
-    // Agregar event listener para paste en todo el componente
-    setTimeout(() => {
-      const inputs = document.querySelectorAll('.digit-input') as NodeListOf<HTMLInputElement>;
-      inputs.forEach((input, index) => {
-        input.addEventListener('paste', (e) => this.onPaste(e, index));
-      });
-    }, 100);
+    // Agregar event listener para paste en todo el componente (sólo en navegador)
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => {
+        const inputs = document.querySelectorAll('.digit-input') as NodeListOf<HTMLInputElement>;
+        inputs.forEach((input, index) => {
+          input.addEventListener('paste', (e) => this.onPaste(e, index));
+        });
+      }, 100);
+    }
   }
 
   ngOnDestroy() {
@@ -131,7 +141,7 @@ export class VerifyEmailComponent implements OnInit {
     this.updateCodigoValue();
     
     // Mover al siguiente input si hay un valor y existe el siguiente input
-    if (value && nextInput) {
+    if (value && nextInput && isPlatformBrowser(this.platformId)) {
       nextInput.focus();
     }
   }
@@ -139,7 +149,7 @@ export class VerifyEmailComponent implements OnInit {
   // Método para manejar teclas especiales
   onKeyDown(event: any, index: number, prevInput: any, nextInput: any) {
     // Permitir backspace para ir al input anterior
-    if (event.key === 'Backspace' && !event.target.value && prevInput) {
+    if (event.key === 'Backspace' && !event.target.value && prevInput && isPlatformBrowser(this.platformId)) {
       prevInput.focus();
     }
     
@@ -152,11 +162,16 @@ export class VerifyEmailComponent implements OnInit {
 
   // Actualizar el valor del FormControl con todos los dígitos
   updateCodigoValue() {
-    const inputs = document.querySelectorAll('.digit-input') as NodeListOf<HTMLInputElement>;
+    let inputs: NodeListOf<HTMLInputElement> | undefined;
+    if (isPlatformBrowser(this.platformId)) {
+      inputs = document.querySelectorAll('.digit-input') as NodeListOf<HTMLInputElement>;
+    }
     let codigo = '';
-    inputs.forEach(input => {
-      codigo += input.value || '';
-    });
+    if (inputs) {
+      inputs.forEach(input => {
+        codigo += input.value || '';
+      });
+    }
     this.verifyForm.get('codigo')?.setValue(codigo);
   }
 
@@ -166,7 +181,7 @@ export class VerifyEmailComponent implements OnInit {
     const pastedData = event.clipboardData?.getData('text') || '';
     const digits = pastedData.replace(/\D/g, '').substring(0, 6); // Solo números, máximo 6
     
-    if (digits.length > 0) {
+    if (digits.length > 0 && isPlatformBrowser(this.platformId)) {
       const inputs = document.querySelectorAll('.digit-input') as NodeListOf<HTMLInputElement>;
       
       // Llenar los inputs con los dígitos pegados
