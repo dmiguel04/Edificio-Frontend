@@ -231,6 +231,35 @@ export class AuthService {
     }
   }
 
+  /**
+   * Intentar extraer el role del payload del access token.
+   * Soporta varias posibles claves que el backend pueda incluir:
+   * - role (string)
+   * - role_key (string)
+   * - role: { key: string }
+   */
+  getUserRole(): string | null {
+    const token = this.getFromStorage('access');
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // chequeos comunes
+      if (payload.role && typeof payload.role === 'string') return payload.role;
+      if (payload.role_key && typeof payload.role_key === 'string') return payload.role_key;
+      if (payload.role && typeof payload.role === 'object' && payload.role.key) return payload.role.key;
+      if (payload.user && payload.user.role && payload.user.role.key) return payload.user.role.key;
+      if (payload.roles && Array.isArray(payload.roles) && payload.roles.length > 0) {
+        const r = payload.roles[0];
+        if (typeof r === 'string') return r;
+        if (r && r.key) return r.key;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   register(data: any) {
     return this.http.post(`${this.apiUrl}/register/`, data);
   }

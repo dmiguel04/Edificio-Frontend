@@ -7,6 +7,10 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardResidenteComponent } from './dashboard-residente.component';
+import { DashboardPersonalComponent } from './dashboard-personal.component';
+import { DashboardJuntaComponent } from './dashboard-junta.component';
+import { DashboardAdministradorComponent } from './dashboard-administrador.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { AuditoriaComponent } from './auditoria/auditoria.component';
@@ -49,6 +53,27 @@ export const routes: Routes = [
     path: 'dashboard', 
     component: DashboardComponent, 
     canActivate: [AuthGuard] 
+  },
+  // Dashboards específicos por rol
+  {
+    path: 'dashboard/residente',
+    component: DashboardResidenteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/personal',
+    component: DashboardPersonalComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/junta',
+    component: DashboardJuntaComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/administrador',
+    component: DashboardAdministradorComponent,
+    canActivate: [AuthGuard]
   },
   { 
     path: 'perfil', 
