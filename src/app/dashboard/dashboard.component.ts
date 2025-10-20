@@ -22,22 +22,6 @@ import { AuthService } from '../services/auth.service';
 export class DashboardComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
-  ngOnInit() {
-    // Redirigir según role si está disponible en el token
-    try {
-      const role = this.auth.getUserRole();
-      if (role) {
-        const key = role.toString().toLowerCase();
-        if (key.includes('residente')) { this.router.navigate(['/dashboard/residente']); return; }
-        if (key.includes('personal')) { this.router.navigate(['/dashboard/personal']); return; }
-        if (key.includes('junta')) { this.router.navigate(['/dashboard/junta']); return; }
-        if (key.includes('administrador') || key.includes('admin')) { this.router.navigate(['/dashboard/administrador']); return; }
-      }
-    } catch (e) {
-      console.warn('No se pudo redirigir por role:', e);
-    }
-  }
-
   goToPerfil() {
     this.router.navigate(['/perfil']);
   }
