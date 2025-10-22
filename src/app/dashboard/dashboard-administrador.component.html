@@ -1,0 +1,70 @@
+<nav style="width:100%; background:#1976d2; color:white; padding:1rem 0; display:flex; justify-content:center; align-items:center; gap:2rem; font-size:1.1rem;">
+  <span style="font-weight:bold; letter-spacing:1px;">EdificioApp</span>
+  <a routerLink="/" style="color:white; text-decoration:none;">Inicio</a>
+  <a routerLink="/perfil" style="color:white; text-decoration:none;">Perfil</a>
+  <button (click)="goToAuditoria()" style="background:#fff; color:#1976d2; border:none; border-radius:5px; padding:0.5rem 1.2rem; font-weight:bold; cursor:pointer;">Auditoría</button>
+  <a style="color:white; cursor:pointer;" (click)="logout()">Cerrar sesión</a>
+</nav>
+
+<div style="max-width:1100px; margin:2rem auto;">
+  <div style="background:#fff; padding:1.4rem; border-radius:8px; box-shadow:0 2px 12px #0002; margin-bottom:1rem;">
+    <h2 style="color:#1976d2; margin:0 0 0.5rem 0;">Panel Administrador</h2>
+    <p style="margin:0 0 0.4rem 0; color:#444;">Gestiona usuarios, roles y estado de cuentas.</p>
+  </div>
+
+  <div style="display:flex; gap:1rem; align-items:flex-start;">
+    <section style="flex:1; background:#fff; padding:1rem; border-radius:8px; box-shadow:0 2px 12px #0002;">
+      <h3>Crear usuario</h3>
+      <form (submit)="onCreate($event)" style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+        <input name="username" placeholder="Usuario" required style="padding:.4rem;" />
+        <input name="email" type="email" placeholder="Email" required style="padding:.4rem;" />
+        <input name="password" type="password" placeholder="Contraseña" required style="padding:.4rem;" />
+        <select name="role" style="padding:.4rem;">
+          <option value="RESIDENTE">Residente</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="JUNTA">Junta</option>
+          <option value="ADMIN">Administrador</option>
+        </select>
+        <button type="submit" style="padding:.5rem 1rem; background:#1976d2; color:white; border:none; border-radius:4px;">Crear</button>
+      </form>
+      <div *ngIf="createError" style="color:#c62828; margin-top:.5rem">{{ createError }}</div>
+      <div *ngIf="createSuccess" style="color:#2e7d32; margin-top:.5rem">Usuario creado correctamente</div>
+    </section>
+
+    <section style="flex:2; background:#fff; padding:1rem; border-radius:8px; box-shadow:0 2px 12px #0002;">
+      <h3>Lista de usuarios</h3>
+      <div *ngIf="loading">Cargando usuarios...</div>
+      <table *ngIf="!loading" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="text-align:left; border-bottom:1px solid #eee;">
+            <th style="padding:.5rem">Usuario</th>
+            <th style="padding:.5rem">Email</th>
+            <th style="padding:.5rem">Rol</th>
+            <th style="padding:.5rem">Activo</th>
+            <th style="padding:.5rem">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users" style="border-bottom:1px solid #f4f4f4;">
+            <td style="padding:.5rem">{{ u.username }}</td>
+            <td style="padding:.5rem">{{ u.email }}</td>
+            <td style="padding:.5rem">{{ u.role }}</td>
+            <td style="padding:.5rem">{{ u.activo }}</td>
+            <td style="padding:.5rem">
+              <ng-container *ngIf="isAdmin">
+                <button (click)="assignRole(u.id, 'ADMIN')" style="margin-right:.25rem">Admin</button>
+                <button (click)="assignRole(u.id, 'JUNTA')" style="margin-right:.25rem">Junta</button>
+                <button (click)="assignRole(u.id, 'PERSONAL')" style="margin-right:.25rem">Personal</button>
+                <button (click)="assignRole(u.id, 'RESIDENTE')" style="margin-right:.25rem">Residente</button>
+                <button (click)="setActive(u.id, !u.activo)">{{ u.activo ? 'Desactivar' : 'Activar' }}</button>
+              </ng-container>
+              <ng-container *ngIf="!isAdmin">
+                <em>No autorizado</em>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</div>

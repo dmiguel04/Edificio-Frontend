@@ -220,11 +220,17 @@ export class AuthService {
     
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      // Include role(s) when available in the token payload
+      const role = payload.role || payload.user_role || null;
+      const roles = payload.roles || payload.user_roles || null;
       return {
         userId: payload.user_id,
         username: payload.username,
         email: payload.email,
-        exp: payload.exp
+        exp: payload.exp,
+        role,
+        roles,
+        raw: payload
       };
     } catch (error) {
       return null;

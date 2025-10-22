@@ -7,9 +7,15 @@ import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardAdministradorComponent } from './dashboard/dashboard-administrador.component';
+import { DashboardJuntaComponent } from './dashboard/dashboard-junta.component';
+import { DashboardPersonalComponent } from './dashboard/dashboard-personal.component';
+import { DashboardResidenteComponent } from './dashboard/dashboard-residente.component';
+import { roleGuardFactory } from './guards/role.guard';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { AuditoriaComponent } from './auditoria/auditoria.component';
+import { DebugTokenComponent } from './debug/debug-token.component';
 
 export const routes: Routes = [
   // Rutas públicas (solo para usuarios NO autenticados)
@@ -45,11 +51,11 @@ export const routes: Routes = [
   },
 
   // Rutas protegidas (solo para usuarios autenticados)
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent, 
-    canActivate: [AuthGuard] 
-  },
+  // Nota: ruta genérica de dashboard eliminada para forzar redirección por rol
+  { path: 'dashboard/administrador', component: DashboardAdministradorComponent, canActivate: [AuthGuard, roleGuardFactory(['ADMIN'])] },
+  { path: 'dashboard/junta', component: DashboardJuntaComponent, canActivate: [AuthGuard, roleGuardFactory(['JUNTA','ADMIN'])] },
+  { path: 'dashboard/personal', component: DashboardPersonalComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard/residente', component: DashboardResidenteComponent, canActivate: [AuthGuard] },
   { 
     path: 'perfil', 
     component: PerfilComponent, 
@@ -60,6 +66,7 @@ export const routes: Routes = [
     component: AuditoriaComponent, 
     canActivate: [AuthGuard] 
   },
+  { path: 'debug/token', component: DebugTokenComponent, canActivate: [AuthGuard] },
 
   // Redirección por defecto para rutas no encontradas
   { 

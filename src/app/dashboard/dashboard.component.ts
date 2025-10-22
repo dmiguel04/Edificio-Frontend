@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { UserService } from '../services';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,8 +20,58 @@ import { AuthService } from '../services/auth.service';
     </div>
   `
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  private userService = inject(UserService);
   constructor(private auth: AuthService, private router: Router) {}
+
+  userRole: string | null = null;
+
+  ngOnInit(): void {
+    // First: check token synchronously and redirect immediately if it contains role
+    this.fallbackToToken();
+
+    // Then: attempt to get current user from backend to reconcile and update role if needed
+    this.userService.getCurrentUser().subscribe({
+      next: (me: any) => {
+        console.log('Dashboard ngOnInit: /me response ->', me);
+        if (me && me.role) {
+          this.userRole = me.role.toString().toUpperCase();
+          console.log('Dashboard ngOnInit: detected role from /me ->', this.userRole);
+          this.redirectByRole(this.userRole);
+        } else if (me && me.roles) {
+          this.userRole = Array.isArray(me.roles) ? me.roles[0].toString().toUpperCase() : me.roles.toString().toUpperCase();
+          console.log('Dashboard ngOnInit: detected roles array from /me ->', this.userRole);
+          this.redirectByRole(this.userRole);
+        } else {
+          this.fallbackToToken();
+        }
+      },
+      error: () => this.fallbackToToken()
+    });
+  }
+
+  private fallbackToToken() {
+    const user = this.auth.getUserFromToken();
+    console.log('Dashboard fallbackToToken: token user ->', user);
+    if (user && (user as any).role) {
+      this.userRole = (user as any).role.toString().toUpperCase();
+      console.log('Dashboard fallbackToToken: detected role from token ->', this.userRole);
+      this.redirectByRole(this.userRole);
+    }
+  }
+
+  private redirectByRole(role: string | null) {
+    if (!role) return;
+    if (role === 'ADMIN' || role === 'ADMINISTRADOR') {
+      this.router.navigate(['/dashboard/administrador']);
+    } else if (role === 'JUNTA') {
+      this.router.navigate(['/dashboard/junta']);
+    } else if (role === 'PERSONAL') {
+      this.router.navigate(['/dashboard/personal']);
+    } else if (role === 'RESIDENTE') {
+      this.router.navigate(['/dashboard/residente']);
+    }
+  }
 
   goToPerfil() {
     this.router.navigate(['/perfil']);

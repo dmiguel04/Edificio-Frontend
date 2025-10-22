@@ -122,6 +122,13 @@
             ],
             "scripts": []
           }
+          ,
+          "configurations": {
+            "ci": {
+              "watch": false,
+              "browsers": "ChromeHeadless"
+            }
+          }
         },
         "server": {
           "builder": "@angular-devkit/build-angular:server",

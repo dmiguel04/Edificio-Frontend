@@ -74,7 +74,8 @@ export class LoginComponent implements OnInit {
   error: string = '';
   estadoCuenta: string = '';
   estadoCuentaColor: string = '#388e3c'; // Verde por defecto
-  returnUrl: string = '/dashboard';
+  // Cambiado a '/' para forzar que la navegación sea determinada por el role extraído del token
+  returnUrl: string = '/';
   loginMessage: string = '';
 
   constructor(
@@ -154,12 +155,7 @@ export class LoginComponent implements OnInit {
     this.auth.loginWithUserPassAdvanced(this.username, this.password).subscribe({
       next: (res: any) => {
         console.log('Respuesta login:', res);
-        if (res.access && res.refresh) {
-          localStorage.setItem('access', res.access);
-          localStorage.setItem('refresh', res.refresh);
-          this.router.navigate([this.returnUrl]);
-          return;
-        }
+        // Si el login devuelve que se envió token por correo para verificar
         if (res.msg && res.username) {
           this.mostrarTokenCorreo = true;
           this.mostrarToken2FA = false;
@@ -167,6 +163,8 @@ export class LoginComponent implements OnInit {
           this.mensaje = res.msg;
           return;
         }
+        
+        // Si requiere 2FA
         if (res.require_2fa) {
           this.mostrarTokenCorreo = false;
           this.mostrarToken2FA = true;
@@ -174,10 +172,32 @@ export class LoginComponent implements OnInit {
           this.mensaje = 'Ingresa el código 2FA.';
           return;
         }
+
+        // Caso tokens devueltos directamente (solo si no hay procesos adicionales pendientes)
+        if (res.access && res.refresh) {
+          localStorage.setItem('access', res.access);
+          localStorage.setItem('refresh', res.refresh);
+
+          // Redirección inmediata basada en el role del token (sin llamadas extra)
+          const user = this.auth.getUserFromToken();
+          const role = (user && (user as any).role) || (user && (user as any).roles && (user as any).roles[0]);
+          if (role) {
+            const r = role.toString().toUpperCase();
+            if (r === 'ADMIN' || r === 'ADMINISTRADOR') { this.router.navigate(['/dashboard/administrador']); return; }
+            if (r === 'JUNTA') { this.router.navigate(['/dashboard/junta']); return; }
+            if (r === 'PERSONAL') { this.router.navigate(['/dashboard/personal']); return; }
+            if (r === 'RESIDENTE') { this.router.navigate(['/dashboard/residente']); return; }
+          }
+
+          this.router.navigate([this.returnUrl]);
+          return;
+        }
+
         if (res.error) {
           this.error = res.error;
           return;
         }
+
         this.error = 'Respuesta inesperada del servidor';
       },
       error: (err) => {
@@ -186,8 +206,17 @@ export class LoginComponent implements OnInit {
         console.error('Error status:', err.status);
         console.error('Error message:', err.message);
         console.error('Error body:', err.error);
-        
-        this.error = err.error?.error || err.error?.message || `Error ${err.status}: ${err.statusText}` || 'Error en login';
+
+        // Mostrar el body del error cuando exista para facilitar debugging
+        if (err && err.error) {
+          try {
+            this.error = typeof err.error === 'string' ? err.error : JSON.stringify(err.error);
+          } catch (e) {
+            this.error = `Error ${err.status}: ${err.statusText}`;
+          }
+        } else {
+          this.error = err.error?.error || err.error?.message || `Error ${err.status}: ${err.statusText}` || 'Error en login';
+        }
       }
     });
 }
@@ -207,17 +236,30 @@ export class LoginComponent implements OnInit {
           this.mostrarTokenCorreo = false;
           this.mostrarToken2FA = true;
           this.mensaje = 'Ingresa el código 2FA de tu app.';
+          return;
         } else if (res.qr_url) {
           this.mostrarTokenCorreo = false;
           this.mostrarQR = true;
           this.qrImageUrl = res.qr_url;
           this.mensaje = 'Escanea el QR y luego ingresa el código 2FA.';
+          return;
         } else if (res.access) {
           localStorage.setItem('access', res.access);
           localStorage.setItem('refresh', res.refresh);
           this.mensaje = 'Login exitoso';
           this.error = '';
+
+          const user = this.auth.getUserFromToken();
+          const role = (user && (user as any).role) || (user && (user as any).roles && (user as any).roles[0]);
+          if (role) {
+            const r = role.toString().toUpperCase();
+            if (r === 'ADMIN' || r === 'ADMINISTRADOR') { this.router.navigate(['/dashboard/administrador']); return; }
+            if (r === 'JUNTA') { this.router.navigate(['/dashboard/junta']); return; }
+            if (r === 'PERSONAL') { this.router.navigate(['/dashboard/personal']); return; }
+            if (r === 'RESIDENTE') { this.router.navigate(['/dashboard/residente']); return; }
+          }
           this.router.navigate([this.returnUrl]);
+          return;
         } else {
           this.error = res.error || 'Respuesta inesperada del servidor';
         }
@@ -248,7 +290,18 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('refresh', res.refresh);
           this.mensaje = 'Login exitoso';
           this.error = '';
+
+          const user = this.auth.getUserFromToken();
+          const role = (user && (user as any).role) || (user && (user as any).roles && (user as any).roles[0]);
+          if (role) {
+            const r = role.toString().toUpperCase();
+            if (r === 'ADMIN' || r === 'ADMINISTRADOR') { this.router.navigate(['/dashboard/administrador']); return; }
+            if (r === 'JUNTA') { this.router.navigate(['/dashboard/junta']); return; }
+            if (r === 'PERSONAL') { this.router.navigate(['/dashboard/personal']); return; }
+            if (r === 'RESIDENTE') { this.router.navigate(['/dashboard/residente']); return; }
+          }
           this.router.navigate([this.returnUrl]);
+          return;
         } else {
           this.error = res.error || 'Código 2FA incorrecto.';
         }
