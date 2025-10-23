@@ -4,7 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { Observable, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { UserService } from '../services/user.service';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, timeout } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class GuestGuard implements CanActivate {
@@ -24,24 +24,17 @@ export class GuestGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean | UrlTree | Observable<boolean | UrlTree> {
     
-    // En el servidor, siempre permitir acceso a rutas de invitado
+    // SSR: permitir rutas de invitado en servidor
     if (!this.isBrowser) {
       return true;
     }
-    
-    // Si el usuario NO está logueado, permitir acceso
-    if (!this.auth.isLoggedIn()) {
-      return true;
-    }
-    
-    // Si no estamos en el navegador, permitir (SSR)
-    if (!this.isBrowser) return true;
 
-    // Si no hay token aparentemente válido, permitir la ruta de invitado
+    // Si no está autenticado, permitir acceso a páginas de invitado
     if (!this.auth.isLoggedIn()) return true;
 
-    // Si hay token, verificar con el backend (GET /me/) para evitar falsos positivos
+    // Si hay token, verificar con backend /me/ (timeout para evitar bloqueos)
     return this.userService.getCurrentUser().pipe(
+      timeout(3000),
       map((user: any) => {
         // Si la API confirma el usuario, primero verificar que esté "completamente" autenticado
         // (email verificado, cuenta activa y sin requerir verificación adicional como 2FA).
@@ -63,32 +56,32 @@ export class GuestGuard implements CanActivate {
           if (f in user && !!user[f]) requires2fa = true;
         }
 
-        // Si la cuenta está inactiva, o el email está presente y NO verificado, o requiere 2FA -> no redirigir
-        if (!active || (emailVerifiedPresent && !emailVerified) || requires2fa) {
-          console.log('GuestGuard: usuario no completamente verificado (activo/email/2fa), permitiendo ruta de invitado');
-          this.auth.clearTokens();
-          return true;
-        }
-
-        // Redirigir por rol si todo OK
-        const role = user?.role || (user?.roles && user.roles[0]);
-        if (role) {
-          const r = role.toString().toUpperCase();
-          if (r === 'ADMIN' || r === 'ADMINISTRADOR') return this.router.createUrlTree(['/dashboard/administrador']);
-          if (r === 'JUNTA') return this.router.createUrlTree(['/dashboard/junta']);
-          if (r === 'PERSONAL') return this.router.createUrlTree(['/dashboard/personal']);
-          if (r === 'RESIDENTE') return this.router.createUrlTree(['/dashboard/residente']);
-        }
-
-        // Si no hay role, redirigir a raíz
-        return this.router.createUrlTree(['/']);
-      }),
-      catchError((err) => {
-        // Si la verificación falla (token inválido/expirado), borrar tokens y permitir la ruta
-        console.warn('GuestGuard: token inválido o /me/ falló, permitiendo acceso a ruta de invitado', err);
+      // Si la cuenta está inactiva, o el email está presente y NO verificado, o requiere 2FA -> no redirigir
+      if (!active || (emailVerifiedPresent && !emailVerified) || requires2fa) {
+        console.log('GuestGuard: usuario no completamente verificado (activo/email/2fa), permitiendo ruta de invitado');
         this.auth.clearTokens();
-        return of(true);
-      })
+        return true;
+      }
+
+      // Redirigir por rol si todo OK
+      const role = user?.role || (user?.roles && user.roles[0]);
+      if (role) {
+        const r = role.toString().toUpperCase();
+        if (r === 'ADMIN' || r === 'ADMINISTRADOR') return this.router.createUrlTree(['/dashboard/administrador']);
+        if (r === 'JUNTA') return this.router.createUrlTree(['/dashboard/junta']);
+        if (r === 'PERSONAL') return this.router.createUrlTree(['/dashboard/personal']);
+        if (r === 'RESIDENTE') return this.router.createUrlTree(['/dashboard/residente']);
+      }
+
+      // Si no hay role, redirigir a raíz
+      return this.router.createUrlTree(['/']);
+    }),
+    catchError((err) => {
+      // Si la verificación falla (token inválido/expirado/timeout), borrar tokens y permitir la ruta
+      console.warn('GuestGuard: token inválido o /me/ falló o timeout, permitiendo acceso a ruta de invitado', err);
+      this.auth.clearTokens();
+      return of(true);
+    })
     );
   }
 }

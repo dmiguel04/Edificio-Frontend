@@ -32,39 +32,46 @@
     </section>
 
     <section style="flex:2; background:#fff; padding:1rem; border-radius:8px; box-shadow:0 2px 12px #0002;">
-      <h3>Lista de usuarios</h3>
-      <div *ngIf="loading">Cargando usuarios...</div>
-      <table *ngIf="!loading" style="width:100%; border-collapse:collapse;">
-        <thead>
-          <tr style="text-align:left; border-bottom:1px solid #eee;">
-            <th style="padding:.5rem">Usuario</th>
-            <th style="padding:.5rem">Email</th>
-            <th style="padding:.5rem">Rol</th>
-            <th style="padding:.5rem">Activo</th>
-            <th style="padding:.5rem">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let u of users" style="border-bottom:1px solid #f4f4f4;">
-            <td style="padding:.5rem">{{ u.username }}</td>
-            <td style="padding:.5rem">{{ u.email }}</td>
-            <td style="padding:.5rem">{{ u.role }}</td>
-            <td style="padding:.5rem">{{ u.activo }}</td>
-            <td style="padding:.5rem">
-              <ng-container *ngIf="isAdmin">
-                <button (click)="assignRole(u.id, 'ADMIN')" style="margin-right:.25rem">Admin</button>
-                <button (click)="assignRole(u.id, 'JUNTA')" style="margin-right:.25rem">Junta</button>
-                <button (click)="assignRole(u.id, 'PERSONAL')" style="margin-right:.25rem">Personal</button>
-                <button (click)="assignRole(u.id, 'RESIDENTE')" style="margin-right:.25rem">Residente</button>
-                <button (click)="setActive(u.id, !u.activo)">{{ u.activo ? 'Desactivar' : 'Activar' }}</button>
-              </ng-container>
-              <ng-container *ngIf="!isAdmin">
-                <em>No autorizado</em>
-              </ng-container>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <h3 style="margin-bottom:.6rem">Lista de usuarios</h3>
+      <div *ngIf="loading" style="padding:.8rem 0; color:#666">Cargando usuarios...</div>
+      <div *ngIf="!loading">
+        <div *ngIf="users.length === 0" style="color:#666; padding:.8rem 0">No hay usuarios registrados.</div>
+        <table *ngIf="users.length > 0" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="text-align:left; border-bottom:1px solid #eee;">
+              <th style="padding:.6rem">Usuario</th>
+              <th style="padding:.6rem">Email</th>
+              <th style="padding:.6rem">Rol</th>
+              <th style="padding:.6rem">Activo</th>
+              <th style="padding:.6rem">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of users" style="border-bottom:1px solid #f4f4f4;">
+              <td style="padding:.6rem"><strong>{{ u.username }}</strong></td>
+              <td style="padding:.6rem; color:#444">{{ u.email }}</td>
+              <td style="padding:.6rem">
+                <span style="display:inline-block; padding:.25rem .5rem; border-radius:12px; background:#eef; color:#034; font-weight:600; font-size:.85rem">{{ getUserRole(u) }}</span>
+              </td>
+              <td style="padding:.6rem">
+                <span [ngStyle]="{ 'color': u.activo ? '#2e7d32' : '#c62828', 'font-weight': '600' }">{{ u.activo ? 'Sí' : 'No' }}</span>
+              </td>
+              <td style="padding:.6rem">
+                <ng-container *ngIf="isAdmin">
+                  <button (click)="assignRole(u.id, 'ADMIN')" style="margin-right:.25rem; padding:.25rem .5rem">Admin</button>
+                  <button (click)="assignRole(u.id, 'JUNTA')" style="margin-right:.25rem; padding:.25rem .5rem">Junta</button>
+                  <button (click)="assignRole(u.id, 'PERSONAL')" style="margin-right:.25rem; padding:.25rem .5rem">Personal</button>
+                  <button (click)="assignRole(u.id, 'RESIDENTE')" style="margin-right:.25rem; padding:.25rem .5rem">Residente</button>
+                  <button (click)="setActive(u.id, !u.activo)" style="padding:.25rem .5rem">{{ u.activo ? 'Desactivar' : 'Activar' }}</button>
+                </ng-container>
+                <ng-container *ngIf="!isAdmin">
+                  <em>No autorizado</em>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </div>
 </div>

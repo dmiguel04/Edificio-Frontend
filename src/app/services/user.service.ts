@@ -10,10 +10,12 @@ export class UserService {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   getUsers(params: any = {}): Observable<any> {
+    // Endpoint corregido: API de gestión de usuarios
+    const base = 'http://localhost:8000/api/gestion-usuarios/usuarios/';
     const qs = Object.keys(params).length
       ? ('?' + Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as any)}`).join('&'))
       : '';
-    return this.http.get<any>(`${this.apiUrl}/${qs}`);
+    return this.http.get<any>(`${base}${qs}`);
   }
 
   /**
@@ -33,7 +35,9 @@ export class UserService {
   }
 
   assignRole(userId: number, role: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${userId}/assign-role/`, { role });
+    // El backend espera el campo 'rol' en español y normalmente valores en minúsculas
+    const rolPayload = { rol: (role || '').toString().toLowerCase() };
+    return this.http.post<any>(`${this.apiUrl}/${userId}/assign-role/`, rolPayload);
   }
 
   setActive(userId: number, activo: boolean): Observable<any> {

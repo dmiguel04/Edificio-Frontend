@@ -1,4 +1,5 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { CanActivate, Router, UrlTree, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
@@ -40,19 +41,15 @@ export class AuthGuard implements CanActivate {
       return this.router.createUrlTree(['/login']);
     }
     
-    // Verificar si el usuario está autenticado
+    // Reusar lógica de AuthService para obtener user desde token
     if (this.auth.isLoggedIn()) {
-      // Verificar si el token no ha expirado (solo en el navegador)
-      const token = this.getFromStorage('access');
-      if (token && this.isTokenExpired(token)) {
-        // Token expirado, limpiar storage y redirigir
-        this.removeFromStorage('access');
-        this.removeFromStorage('refresh');
-        console.log('Token expirado, redirigiendo al login');
-        return this.router.createUrlTree(['/login'], { 
-          queryParams: { message: 'Sesión expirada, por favor inicia sesión nuevamente' }
-        });
+      const user = this.auth.getUserFromToken();
+      if (!user) {
+        // Token inválido/dañado
+        this.auth.clearTokens();
+        return this.router.createUrlTree(['/login'], { queryParams: { message: 'Sesión inválida, inicia sesión nuevamente' } });
       }
+      // Token válido y no expirado según isLoggedIn()
       return true;
     }
     

@@ -75,6 +75,14 @@ export class DashboardAdministradorComponent implements OnInit {
     });
   }
 
+  // Devuelve un rol legible a partir del objeto usuario (soporta varias claves: role, roles, rol)
+  getUserRole(u: any): string {
+    if (!u) return '';
+    const r = u.role || u.rol || (u.roles && u.roles[0]) || (u.roles && u.roles.length && u.roles[0]) || null;
+    if (!r) return '—';
+    return typeof r === 'string' ? r.toUpperCase() : (r.toString ? r.toString().toUpperCase() : '—');
+  }
+
   onCreate(event: Event) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;

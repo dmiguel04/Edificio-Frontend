@@ -22,6 +22,30 @@ export class AuthService {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
+  /**
+   * Intentar refrescar el access token usando el refresh token almacenado.
+   * Devuelve el response del endpoint de refresh o null si no fue posible.
+   * Backend expected endpoint: POST { apiUrl + '/token/refresh/' } with { refresh }
+   */
+  attemptTokenRefresh(): Observable<any> {
+    if (!this.isBrowser) return of(null);
+    const refresh = this.getFromStorage('refresh');
+    if (!refresh) return of(null);
+    return this.http.post<any>(`${this.apiUrl}/token/refresh/`, { refresh }).pipe(
+      timeout(5000),
+      tap((resp: any) => {
+        const access = resp?.access || resp?.access_token || resp?.token || null;
+        const refreshNew = resp?.refresh || resp?.refresh_token || resp?.refreshToken || null;
+        if (access) this.setInStorage('access', access);
+        if (refreshNew) this.setInStorage('refresh', refreshNew);
+      }),
+      catchError(err => {
+        console.warn('Refresh token failed', err);
+        return of(null);
+      })
+    );
+  }
+
   logout(): Observable<any> {
     console.log('=== LOGOUT ULTRA-OPTIMIZADO ANTI-BROKEN-PIPE ===');
     
@@ -157,7 +181,14 @@ export class AuthService {
   }
 
   validateTokenCorreo(username: string, token: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/validate-login-token/`, { username, token });
+    // Enviar múltiples sinónimos para máxima compatibilidad con backend
+    const payload: any = { username };
+    // enviar variantes: token, code, login_token, email_token
+    payload.token = token;
+    payload.code = token;
+    payload.login_token = token;
+    payload.email_token = token;
+    return this.http.post(`${this.apiUrl}/validate-login-token/`, payload);
   }
 
   validateCodigo2FA(payload: { username: string; code: string }): Observable<any> {

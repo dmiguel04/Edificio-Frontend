@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, from } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { isPlatformBrowser } from '@angular/common';
@@ -32,21 +32,31 @@ export class AuthInterceptor implements HttpInterceptor {
       }
     }
 
+    // Intentar manejar 401 automáticamente: intentar refresh y reintentar la petición original
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Solo manejar errores de autenticación en el navegador
-        if (this.isBrowser) {
-          if (error.status === 401) {
-            // Token inválido o expirado
-            console.log('Interceptor: Token inválido, limpiando y redirigiendo');
-            this.authService.clearTokens();
-            this.router.navigate(['/login'], {
-              queryParams: { message: 'Sesión expirada, por favor inicia sesión nuevamente' }
-            });
-          } else if (error.status === 403) {
-            // Acceso denegado
-            console.error('Interceptor: Acceso denegado:', error.error);
-          }
+        if (!this.isBrowser) return throwError(() => error);
+
+        if (error.status === 401) {
+          // Intentar refresh token
+          return from(this.authService.attemptTokenRefresh().toPromise()).pipe(
+            switchMap((refreshResp: any) => {
+              if (refreshResp && (refreshResp.access || refreshResp.access_token || refreshResp.token)) {
+                // Hay un nuevo access, reintentar la petición original con nuevo token
+                const newToken = localStorage.getItem('access');
+                const retryReq = req.clone({ headers: req.headers.set('Authorization', `Bearer ${newToken}`) });
+                return next.handle(retryReq);
+              }
+              // No se pudo refrescar: limpiar y redirigir
+              this.authService.clearTokens();
+              this.router.navigate(['/login'], { queryParams: { message: 'Sesión expirada, por favor inicia sesión nuevamente' } });
+              return throwError(() => error);
+            })
+          );
+        }
+
+        if (error.status === 403) {
+          console.error('Interceptor: Acceso denegado:', error.error);
         }
 
         return throwError(() => error);

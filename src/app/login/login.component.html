@@ -61,7 +61,15 @@
       <label for="tokenCorreo">Token de verificación (correo):</label>
       <input id="tokenCorreo" name="tokenCorreo" [(ngModel)]="tokenCorreo" required class="input-field">
     </div>
-    <button type="submit" [disabled]="tokenCorreoForm.invalid" class="main-btn">Verificar token</button>
+    <div *ngIf="sentToMasked" class="sent-to" style="margin-bottom: .5rem; color: #555; font-size: .95rem;">
+      Código enviado a: <strong>{{ sentToMasked }}</strong>
+    </div>
+
+    <div *ngIf="isTokenCorreoBloqueado" class="blocked-msg" style="color:#c62828; margin-bottom:.5rem;">
+      Demasiados intentos. Intenta en <span>{{ tokenCorreoBloqueadoSegundos }}</span> segundos.
+    </div>
+
+    <button type="submit" [disabled]="tokenCorreoForm.invalid || isTokenCorreoBloqueado" class="main-btn">Verificar token</button>
   </form>
   <form *ngIf="mostrarToken2FA && !mostrarQR" (ngSubmit)="verificarCodigo2FA()" #token2FAForm="ngForm" class="login-form">
     <div class="form-group">

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
@@ -9,10 +9,13 @@ import { AuthService } from '../services/auth.service';
 export function roleGuardFactory(allowedRoles: string[]): CanActivateFn {
   return () => {
     try {
-      const token = localStorage.getItem('access');
-      if (!token) return false;
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const role = payload.role || (payload.roles && payload.roles[0]);
+      const auth = inject(AuthService);
+      const router = inject(Router);
+
+      // En SSR no hay localStorage — denegar y redirigir al login
+      const user = auth.getUserFromToken();
+      if (!user) return false;
+      const role = user.role || (user.roles && user.roles[0]);
       if (!role) return false;
       return allowedRoles.map(r => r.toUpperCase()).includes(role.toString().toUpperCase());
     } catch (e) {
