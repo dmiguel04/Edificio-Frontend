@@ -1,0 +1,95 @@
+.finanzas-root {
+  padding: 28px;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #1f2937;
+}
+
+.finanzas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.finanzas-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #0f172a;
+}
+
+.actions { display:flex; gap:10px; }
+.btn { padding: 8px 12px; border-radius:6px; border: none; cursor: pointer; }
+.btn.primary { background:#1976d2; color:#fff }
+.btn.accent { background:#2e7d32; color:#fff }
+
+.finanzas-content { background: #fff; padding: 18px; border-radius: 8px; box-shadow: 0 6px 18px rgba(33,33,33,0.06); }
+
+.loading { display:flex; align-items:center; gap:12px; }
+.spinner { width:28px; height:28px; border-radius:50%; border:4px solid rgba(0,0,0,0.1); border-top-color:#1976d2; animation: spin 1s linear infinite }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+.alert.error { background:#ffefef; color:#7a1515; padding:10px; border-radius:6px; margin-bottom:12px }
+
+.table-wrapper { overflow:auto; margin-top:12px }
+.payments-table { width:100%; border-collapse: collapse; }
+.payments-table th, .payments-table td { text-align:left; padding:10px 12px; border-bottom:1px solid #eef0f2 }
+.payments-table thead th { background:#fafafa; font-weight:600; }
+
+.empty { text-align:center; padding:28px 0 }
+
+@media (max-width:600px) {
+  .finanzas-header { flex-direction:column; align-items:flex-start; }
+  .actions { width:100% }
+}
+.actions { display:flex; gap:12px; align-items:center }
+.btn { padding: 10px 14px; border-radius:8px; border: none; cursor: pointer; font-weight:600; box-shadow: 0 2px 6px rgba(12,15,20,0.04); }
+.btn.primary { background:#0ea5e9; color:#fff }
+.btn.accent { background:#10b981; color:#fff }
+.btn.outline { background:transparent; border:1px solid #e6eef2; color:#0f172a }
+
+.finanzas-content { background: #ffffff; padding: 22px; border-radius: 12px; box-shadow: 0 10px 30px rgba(2,6,23,0.06); }
+
+.loading { display:flex; align-items:center; gap:12px; }
+.spinner { width:30px; height:30px; border-radius:50%; border:4px solid rgba(15,23,42,0.08); border-top-color:#0ea5e9; animation: spin 1s linear infinite }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+.alert { padding:12px; border-radius:8px; margin-bottom:14px; }
+.alert.error { background:#fff1f2; color:#9f1239; }
+.alert.success { background:#ecfdf5; color:#065f46; }
+
+.table-wrapper { overflow:auto; margin-top:12px; }
+.payments-table { width:100%; border-collapse: collapse; border-radius:8px; overflow:hidden; }
+.payments-table th, .payments-table td { text-align:left; padding:14px 16px; border-bottom:1px solid #f1f5f9; }
+.payments-table thead th { background:#f8fafc; font-weight:700; color:#0f172a; }
+
+.payments-table tbody tr:hover { background:#fbfdff }
+.payments-table .amount { font-weight:700 }
+
+.empty { text-align:center; padding:40px 0 }
+
+/* Responsive */
+@media (max-width:800px) {
+  .finanzas-header { flex-direction:column; align-items:flex-start }
+  .actions { width:100%; justify-content:flex-start; flex-wrap:wrap }
+}
+
+/* Payment / Checkout specific small helpers */
+.payment-container { max-width:760px; margin:18px auto 0; }
+.qr-box { border:1px dashed #e6eef2; padding:16px; border-radius:8px; text-align:center; background:#fcfdff }
+.qr-box img { max-width:240px; height:auto; display:block; margin:8px auto }
+.auth-box { padding:12px; border-radius:8px; background:#f8fafc }
+
+/* Payments card */
+.payments-card { background:#ffffff; border-radius:12px; padding:14px; box-shadow: 0 8px 24px rgba(2,6,23,0.04) }
+.payments-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px }
+.payments-card-header h3 { margin:0 }
+.payments-card-header .count { background:#f1f5f9; padding:6px 10px; border-radius:999px; font-weight:700 }
+
+.status-badge { display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; text-transform:capitalize }
+.status-badge.s-success { background:#ecfdf5; color:#065f46 }
+.status-badge.s-pending { background:#fffbeb; color:#92400e }
+.status-badge.s-failed { background:#fff1f2; color:#9f1239 }
+

@@ -15,9 +15,13 @@ export function roleGuardFactory(allowedRoles: string[]): CanActivateFn {
       // En SSR no hay localStorage — denegar y redirigir al login
       const user = auth.getUserFromToken();
       if (!user) return false;
-      const role = user.role || (user.roles && user.roles[0]);
-      if (!role) return false;
-      return allowedRoles.map(r => r.toUpperCase()).includes(role.toString().toUpperCase());
+      const rawRole = user.role || user.rol || (user.roles && user.roles[0]);
+      if (!rawRole) return false;
+      const roleStr = rawRole.toString().toUpperCase();
+      // Normalizar: permitir variantes como ADMINISTRADOR que empiezan por ADMIN
+      const normalizedAllowed = allowedRoles.map(r => r.toString().toUpperCase());
+      // Match if role equals allowed role or startsWith allowed role (ADMINISTRADOR -> ADMIN)
+      return normalizedAllowed.some(ar => roleStr === ar || roleStr.startsWith(ar));
     } catch (e) {
       return false;
     }

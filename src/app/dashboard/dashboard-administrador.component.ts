@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { UserService } from '../services';
 import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-dashboard-administrador',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-administrador.component.html',
   styleUrls: ['./dashboard-administrador.component.scss']
 })

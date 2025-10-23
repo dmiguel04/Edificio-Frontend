@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { GuestGuard } from './guards/guest.guard';
 import { LoginComponent } from './login/login.component';
@@ -49,6 +50,10 @@ export const routes: Routes = [
     component: ResetPasswordComponent, 
     canActivate: [GuestGuard] 
   },
+  { 
+    path: 'finanzas', 
+    loadChildren: () => import('./finanzas/finanzas.module').then(m => m.FinanzasModule) 
+  },
 
   // Rutas protegidas (solo para usuarios autenticados)
   // Nota: ruta genérica de dashboard eliminada para forzar redirección por rol
@@ -74,3 +79,9 @@ export const routes: Routes = [
     redirectTo: ''
   }
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

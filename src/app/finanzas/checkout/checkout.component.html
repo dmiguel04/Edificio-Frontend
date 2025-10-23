@@ -1,0 +1,7 @@
+<div class="checkout-root">
+  <div *ngIf="loading">Cargando checkout...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <!-- Aquí será montado el checkout embebido -->
+  <div id="checkout"></div>
+</div>

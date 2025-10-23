@@ -1,0 +1,59 @@
+<div class="max-w-6xl mx-auto p-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- LEFT: summary -->
+    <aside class="lg:col-span-1">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Resumen del pedido</h3>
+        <div class="flex gap-3 mb-3">
+          <button class="px-3 py-1 rounded border border-gray-200 text-sm bg-white">BOB 206.26</button>
+          <button class="px-3 py-1 rounded border border-gray-200 text-sm bg-white">USD 28.80</button>
+        </div>
+
+        <div class="flex items-start gap-3 mb-4">
+          <img src="/assets/img/product-placeholder.png" alt="producto" class="w-14 h-14 rounded" />
+          <div>
+            <div class="font-semibold">Pure Glow Cream</div>
+            <div class="text-sm text-gray-600">BOB 229.18</div>
+          </div>
+        </div>
+
+        <div class="text-sm text-gray-600 space-y-2">
+          <div class="flex justify-between"><span>Subtotal</span><span>BOB 229.18</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Descuento</span><span class="text-gray-700">-BOB 22.92</span></div>
+          <div class="flex justify-between border-t pt-3 font-bold"><span>Total</span><span>BOB 206.26</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: payment form (span 2 columns in lg) -->
+    <main class="lg:col-span-2">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <div *ngIf="successMessage" class="mb-4 bg-green-50 text-green-800 p-4 rounded">{{ successMessage }} <a class="underline ml-2" routerLink="/finanzas">Volver a finanzas</a></div>
+        <form *ngIf="!successMessage" id="payment-form" (submit)="$event.preventDefault(); handleSubmit();">
+          <div class="mb-4">
+            <button class="w-full bg-black text-white py-3 rounded text-sm font-semibold"> Pay</button>
+          </div>
+
+          <div id="payment-element" aria-label="Payment Element" class="mb-4"></div>
+
+          <div *ngIf="nextActionType === 'qr_code' && qrImageUrl" class="mb-4 border-dashed border-2 border-gray-200 rounded p-4 text-center">
+            <p class="mb-2 text-sm">Escanea este código con tu app para autorizar el pago:</p>
+            <img [src]="qrImageUrl" alt="QR para autorizar el pago" class="mx-auto w-40 h-40 object-contain" />
+          </div>
+
+          <div *ngIf="(nextActionType === 'mobile_auth' || nextActionType === 'hosted_instructions') && authUrl" class="mb-4 bg-gray-50 p-3 rounded">
+            <p class="text-sm">Se requiere autorización adicional. <a [href]="authUrl" target="_blank" rel="noopener" class="text-blue-600 underline">Abrir instrucciones</a></p>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded font-semibold" [disabled]="loading">
+              <span *ngIf="loading">Procesando…</span>
+              <span *ngIf="!loading">Pagar ahora</span>
+            </button>
+            <div *ngIf="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>

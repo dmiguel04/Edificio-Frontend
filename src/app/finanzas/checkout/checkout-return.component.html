@@ -1,0 +1,18 @@
+<div class="checkout-return-root">
+  <div *ngIf="loading">Verificando estado de la sesión...</div>
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <div *ngIf="!loading && !errorMessage">
+    <div *ngIf="status === 'open'">
+      <p>La sesión aún está abierta. Redirigiendo...</p>
+      <p><a href="/finanzas/checkout">Volver a intentar el pago</a></p>
+    </div>
+    <div *ngIf="status === 'complete'">
+      <p>Gracias por tu pago! Se envió la confirmación a <strong>{{ customerEmail }}</strong></p>
+    </div>
+    <div *ngIf="status && status !== 'open' && status !== 'complete'">
+      <p>Estado de la sesión: {{ status }}</p>
+    </div>
+  </div>
+</div>

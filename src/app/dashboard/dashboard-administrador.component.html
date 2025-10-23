@@ -10,6 +10,10 @@
   <div style="background:#fff; padding:1.4rem; border-radius:8px; box-shadow:0 2px 12px #0002; margin-bottom:1rem;">
     <h2 style="color:#1976d2; margin:0 0 0.5rem 0;">Panel Administrador</h2>
     <p style="margin:0 0 0.4rem 0; color:#444;">Gestiona usuarios, roles y estado de cuentas.</p>
+      <div style="margin-top:.6rem">
+        <button (click)="goToAuditoria()" style="background:#1976d2; color:white; border:none; padding:.4rem .8rem; border-radius:5px; margin-right:.5rem">Auditoría</button>
+        <a routerLink="/finanzas" style="background:#388e3c; color:white; padding:.4rem .8rem; border-radius:5px; text-decoration:none;">Finanzas</a>
+      </div>
   </div>
 
   <div style="display:flex; gap:1rem; align-items:flex-start;">
