@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: Edificio - Financial API (Mock/OpenAPI)
+  version: 1.0.0
+  description: |
+    OpenAPI specification (mock) for Treasury (Stripe Treasury), Payments (Stripe Payments) and Billing APIs used by the Edificio frontend.
+servers:
+  - url: http://localhost:4001
+    description: Local mock server
+paths:
+  /treasury/create_account:
+    post:
+      summary: Crear cuenta conectada y cuenta financiera (mock)
+      tags: [treasury]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Cuenta creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connectedAccountId:
+                    type: string
+                  treasuryAccountId:
+                    type: string
+                  onboardingUrl:
+                    type: string
+  /treasury/balance:
+    get:
+      summary: Obtener saldo disponible de la cuenta financiera (mock)
+      tags: [treasury]
+      parameters:
+        - name: accountId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Saldo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: integer
+                        currency:
+                          type: string
+  /treasury/issue_card:
+    post:
+      summary: Emitir tarjeta virtual (mock)
+      tags: [treasury]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+                cardholderName:
+                  type: string
+      responses:
+        '200':
+          description: Tarjeta creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cardId:
+                    type: string
+                  ephemeralKey:
+                    type: string
+  /treasury/outbound_transfer:
+    post:
+      summary: Transferir fondos salientes (mock)
+      tags: [treasury]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountId:
+                  type: string
+                amount:
+                  type: integer
+                destination:
+                  type: string
+      responses:
+        '200':
+          description: Transferencia iniciada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transferId:
+                    type: string
+                  status:
+                    type: string
+  /treasury/transactions:
+    get:
+      summary: Listar transacciones de la cuenta financiera (mock)
+      tags: [treasury]
+      parameters:
+        - name: accountId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de transacciones
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        amount:
+                          type: integer
+                        currency:
+                          type: string
+                        description:
+                          type: string
+                        created_at:
+                          type: string
+  /payments/create_payment_intent:
+    post:
+      summary: Crear PaymentIntent (mock)
+      tags: [payments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                currency:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Client secret
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_secret:
+                    type: string
+                  paymentIntentId:
+                    type: string
+  /payments/create_checkout_session:
+    post:
+      summary: Crear sesión de Checkout (mock)
+      tags: [payments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                currency:
+                  type: string
+      responses:
+        '200':
+          description: Checkout session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+  /billing/invoices:
+    get:
+      summary: Listar facturas
+      tags: [billing]
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de facturas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    amount:
+                      type: integer
+                    due_date:
+                      type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

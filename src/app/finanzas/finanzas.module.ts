@@ -1,33 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-
-import { FinanzasComponent } from './finanzas.component';
-import { FinanzasService } from './finanzas.service';
-import { PaymentComponent } from './payment/payment.component';
-import { PaymentSuccessComponent } from './payment-success.component';
+import { FormsModule } from '@angular/forms';
 import { CheckoutComponent } from './checkout/checkout.component';
-import { CheckoutReturnComponent } from './checkout/checkout-return.component';
+import { CheckoutSummaryComponent } from './checkout/checkout-summary.component';
+import { PaymentSuccessComponent } from './payment/payment-success/payment-success.component';
+import { PaymentFailedComponent } from './payment/payment-failed/payment-failed.component';
+import { TreasuryDashboardComponent } from './treasury/treasury-dashboard.component';
+import { InvoicesListComponent } from './invoices/invoices-list.component';
+import { PayrollComponent } from './payroll/payroll.component';
+import { ReservationCheckoutComponent } from './reservation-checkout/reservation-checkout.component';
+import { FinanzasRoutingModule } from './finanzas-routing.module';
 
 @NgModule({
+  declarations: [],
   imports: [
     CommonModule,
-    HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
-    FinanzasComponent,
-    PaymentComponent,
+    // Algunos componentes en este proyecto están definidos como standalone;
+    // importarlos en lugar de declararlos evita el error "standalone cannot be declared".
+    CheckoutComponent,
+    CheckoutSummaryComponent,
     PaymentSuccessComponent,
-    RouterModule.forChild([
-      { path: '', component: FinanzasComponent },
-      { path: 'payment', component: PaymentComponent },
-      { path: 'success', component: PaymentSuccessComponent },
-      { path: 'checkout', component: CheckoutComponent },
-      { path: 'checkout-return', component: CheckoutReturnComponent }
-    ])
+    PaymentFailedComponent,
+  TreasuryDashboardComponent,
+    ReservationCheckoutComponent,
+    InvoicesListComponent,
+    PayrollComponent,
+    FinanzasRoutingModule
   ],
-  providers: [FinanzasService]
+  providers: []
 })
-export class FinanzasModule { }
+export class FinanzasModule {}

@@ -1,0 +1,51 @@
+<div class="treasury-root">
+  <div class="center-card">
+    <h2 class="heading">Gestión Financiera</h2>
+
+    <div *ngIf="!account" class="empty-state">
+      <p>No existe cuenta financiera para el usuario.</p>
+      <button class="btn primary" (click)="createAccount()" [disabled]="loading">Crear cuenta financiera</button>
+    </div>
+
+    <div class="quick-nav" *ngIf="true" style="margin-top:12px; display:flex; gap:8px;">
+      <a class="btn" routerLink="/finanzas/checko ut" style="text-decoration:none">Ir a Pago</a>
+      <a class="btn" routerLink="/finanzas/invoices" style="text-decoration:none">Facturas</a>
+      <a class="btn" routerLink="/finanzas/payroll" style="text-decoration:none">Nómina</a>
+      <a class="btn" routerLink="/finanzas/treasury" style="text-decoration:none">Refrescar Treasury</a>
+    </div>
+
+    <div *ngIf="account" class="account-panel">
+      <div class="account-header">
+        <div>
+          <h3>Cuenta</h3>
+          <div class="id">Stripe Account: {{ account.stripe_account_id || account.connectedAccountId }}</div>
+          <div class="id">Financial Account: {{ account.stripe_financial_account_id || account.treasuryAccountId }}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" (click)="loadBalance()">Actualizar saldo</button>
+          <button class="btn" (click)="issueCard()">Emitir tarjeta</button>
+          <button class="btn" (click)="transfer()">Transferir</button>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="balance" *ngIf="balance">
+          <div class="label">Saldo disponible</div>
+          <div class="amount" *ngFor="let a of balance.available">{{ a.amount/100 | currency:a.currency }}</div>
+        </div>
+
+        <div class="transactions" *ngIf="transactions.length">
+          <h4>Transacciones recientes</h4>
+          <ul>
+            <li *ngFor="let t of transactions">
+              <div class="tx-row">
+                <div class="tx-desc">{{ t.description }}</div>
+                <div class="tx-meta">{{ t.created_at | date:'short' }} • {{ t.amount/100 | currency:t.currency }}</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

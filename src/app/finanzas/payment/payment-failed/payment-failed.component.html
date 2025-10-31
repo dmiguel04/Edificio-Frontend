@@ -1,0 +1,21 @@
+<div class="failed-root">
+	<div class="failed-card">
+			<div class="icon-wrap">
+				<!-- SVG cross with animated stroke -->
+				<svg class="svg-cross" viewBox="0 0 52 52" width="120" height="120" aria-hidden="true">
+					<circle cx="26" cy="26" r="25" fill="none" stroke="var(--color-error)" stroke-width="2" />
+					<path class="crossmark" fill="none" stroke="#fff" stroke-width="4" d="M16 16 L36 36 M36 16 L16 36" />
+				</svg>
+			</div>
+			<h1 class="title">Pago no realizado</h1>
+			<p class="subtitle">Hubo un problema al procesar tu pago. Por favor inténtalo de nuevo.</p>
+			<div class="meta">
+				<div *ngIf="transactionId"><strong>ID transacción:</strong> {{ transactionId }}</div>
+				<div *ngIf="customerEmail"><strong>Enviado a:</strong> {{ customerEmail }}</div>
+			</div>
+			<div class="actions">
+				<a routerLink="/finanzas/checkout" class="btn secondary">Reintentar pago</a>
+				<a routerLink="/finanzas" class="btn muted">Volver a finanzas</a>
+			</div>
+	</div>
+</div>

@@ -17,6 +17,28 @@ import { UserService } from '../services';
     <div style="max-width: 600px; margin: 3rem auto; padding: 2rem; border-radius: 12px; background: #fff; color: #222; box-shadow: 0 2px 12px #0002; text-align:center;">
       <h2 style="color:#1976d2;">Bienvenido al Dashboard</h2>
       <p>¡Has iniciado sesión correctamente!</p>
+      
+      <div style="max-width:800px;margin:1.5rem auto; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <a class="btn" routerLink="/finanzas/reservation" style="text-decoration:none; padding:10px 14px; background:#0b74de; color:#fff; border-radius:6px;">Reservaciones (Pago now)</a>
+        <a class="btn" routerLink="/finanzas/list" style="text-decoration:none; padding:10px 14px; background:#06b6d4; color:#fff; border-radius:6px;">Ver Pagos</a>
+        <a class="btn" routerLink="/finanzas/checkout" style="text-decoration:none; padding:10px 14px; background:#10b981; color:#fff; border-radius:6px;">Embedded Checkout</a>
+        <a class="btn" routerLink="/finanzas/treasury" style="text-decoration:none; padding:10px 14px; background:#f59e0b; color:#fff; border-radius:6px;">Gestión Financiera</a>
+        <a class="btn" routerLink="/finanzas/invoices" style="text-decoration:none; padding:10px 14px; background:#7c3aed; color:#fff; border-radius:6px;">Facturas</a>
+        <a class="btn" routerLink="/finanzas/payroll" style="text-decoration:none; padding:10px 14px; background:#ef4444; color:#fff; border-radius:6px;">Nómina</a>
+      </div>
+
+      <div style="max-width:820px;margin:0.5rem auto; text-align:left; background:#fff; padding:16px; border-radius:8px; box-shadow:0 1px 6px #0002;">
+        <h3 style="margin-top:0">Funciones disponibles en Finanzas</h3>
+        <ul style="line-height:1.8">
+          <li><strong>Reservaciones (pay_now)</strong> — Pago con Stripe Elements y confirmCardPayment, con polling para reconciliación.</li>
+          <li><strong>Embedded Checkout</strong> — Payment Elements / Checkout integrado.</li>
+          <li><strong>Listado de pagos</strong> — Búsqueda por ID, paginación y descarga de recibos (si el backend expone endpoint).</li>
+          <li><strong>Treasury</strong> — Gestión financiera (balances, transferencias, emisión de tarjetas).</li>
+          <li><strong>Facturas y Nómina</strong> — Paneles administrativos para crear/listar facturas y nómina.</li>
+          <li><strong>Suscripciones</strong> — Crear customer y suscribir con price_id (backend required).</li>
+          <li><strong>Reembolsos (admin)</strong> — Formulario para solicitar reembolsos a través del backend.</li>
+        </ul>
+      </div>
     </div>
   `
 })

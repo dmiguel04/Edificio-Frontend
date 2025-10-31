@@ -1,7 +1,86 @@
 <div class="checkout-root">
-  <div *ngIf="loading">Cargando checkout...</div>
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div class="checkout-container">
+    <!-- Left: Reservation/Product summary (dark) -->
+    <div class="checkout-left left-dark">
+      <h2 class="title">{{ reservation?.title || 'Reserva' }}</h2>
+      <p class="muted">{{ reservation?.subtitle || reservation?.period || 'Detalle de la reserva' }}</p>
 
-  <!-- Aquí será montado el checkout embebido -->
-  <div id="checkout"></div>
+      <div class="product-card">
+        <div class="product-media">
+          <!-- placeholder image/icon -->
+          <div class="product-logo">▢</div>
+        </div>
+        <div class="product-body">
+          <div class="product-name">{{ reservation?.plan_name || reservation?.title || 'Reserva' }}</div>
+          <div class="product-desc">{{ reservation?.summary || reservation?.description || 'Detalle de la reserva y condiciones.' }}</div>
+          <div class="product-price">{{ amount ? (amount | currency:'USD') : (reservation?.price ? (reservation.price | currency:'USD') : '') }}</div>
+        </div>
+      </div>
+
+      <div class="billing-lines">
+        <div class="line"><span>Subtotal</span><span>{{ amount ? (amount | currency:'USD') : '—' }}</span></div>
+        <div class="line"><span>Impuesto</span><span>{{ reservation?.tax ? (reservation.tax | currency:'USD') : 'USD 0.00' }}</span></div>
+        <div class="line total"><span>Total después del período</span><span>{{ amount ? (amount | currency:'USD') : '—' }}</span></div>
+        <div class="line strong"><span>Total adeudado hoy</span><span>{{ reservation?.due_today_cents ? (reservation.due_today_cents/100 | currency:'USD') : (reservation?.today_due ? (reservation.today_due | currency:'USD') : 'USD 0.00') }}</span></div>
+      </div>
+    </div>
+
+    <!-- Right: Payment form (white) -->
+    <aside class="checkout-right">
+      <div class="pay-card">
+        <h3>Ingresa los datos de pago</h3>
+
+        <div class="field boxed">
+          <label class="small">Correo electrónico</label>
+          <div class="muted">{{ reservation?.customer_email || reservation?.email || 'user@example.com' }}</div>
+        </div>
+
+        <div class="field">
+          <label class="small">Método de pago</label>
+          <div class="gateway-list">
+            <label class="gateway" *ngFor="let gw of gateways">
+              <input type="radio" name="method" [value]="gw.id" [(ngModel)]="selectedGateway" (change)="onGatewayChange(gw.id)" />
+              <span>{{ gw.label }}</span>
+            </label>
+          </div>
+          <div *ngIf="onlyCardAvailable" class="small muted" style="margin-top:6px">Solo disponible: Tarjeta</div>
+        </div>
+
+        <div *ngIf="selectedGateway === 'card'" class="card-box">
+          <label class="label">Número de tarjeta</label>
+          <div id="card-element" class="card-element"><!-- Stripe Card Element will mount here --></div>
+          <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+        </div>
+
+        <div class="field boxed">
+          <label class="small">Monto a pagar</label>
+            <input type="number" [(ngModel)]="amount" name="amount" min="0" placeholder="Ej: 100.00" />
+            <div *ngIf="amount_display" class="small muted">Importe facturado: {{ amount_display }}</div>
+            <div *ngIf="status_label" class="small" style="margin-top:4px">Estado: {{ status_label }}</div>
+        </div>
+
+        <div *ngIf="selectedGateway && selectedGateway !== 'card'" class="card-box">
+          <div class="small muted">Has seleccionado "{{ selectedGateway }}" — serás redirigido a un flujo de pago externo (Checkout) para completar el pago. Una vez pagado, puede tardar unos instantes en confirmarse.</div>
+          <div *ngIf="reservation?.payment_instructions" class="muted">{{ reservation.payment_instructions }}</div>
+        </div>
+
+        <div class="field boxed small">
+          <label><input type="checkbox" /> Guardar mis datos para un proceso de compra más rápido</label>
+        </div>
+
+        <div style="text-align:center; margin-top:14px">
+          <button class="btn big-cta" (click)="pay()" [disabled]="loading">{{ loading ? 'Procesando...' : (reservation?.cta_text || 'Pagar ahora') }}</button>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:8px; justify-content:center">
+          <button class="btn" routerLink="/finanzas/invoices">Ir a Facturas</button>
+          <button class="btn" routerLink="/finanzas/payroll">Ir a Nómina</button>
+          <button *ngIf="invoiceId" class="btn" (click)="downloadInvoicePdf()">Descargar factura</button>
+        </div>
+
+        <div class="small muted" style="margin-top:10px; font-size:.85rem">Al pagar, autorizas a la propiedad a cobrar según las condiciones establecidas hasta que canceles.</div>
+      </div>
+    </aside>
+
+  </div>
 </div>

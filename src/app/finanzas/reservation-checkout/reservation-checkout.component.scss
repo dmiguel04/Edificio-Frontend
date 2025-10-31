@@ -1,0 +1,45 @@
+.checkout-root { max-width: 980px; margin: 0 auto; padding: 24px }
+.checkout-container { display:flex; gap:24px; align-items:flex-start }
+.checkout-left { flex:1; background:#0f1113; color:#fff; padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.35) }
+.checkout-right { width:360px }
+.card-box { margin-top:14px }
+.card-element { border:1px solid #e6e6e6; padding:10px; border-radius:8px; background:#fff }
+.form-row { margin-bottom:14px }
+.label { display:block; margin-bottom:8px; color:rgba(255,255,255,0.85) }
+.checkout-left select { width:100%; padding:8px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:#fff; color:#111 }
+.checkout-left input[type="date"], .checkout-left input[type="time"], .checkout-left input[type="number"], .checkout-left input[type="text"], .checkout-left input[type="email"] { background:#fff; color:#111; padding:8px; border-radius:6px; border:1px solid #e6e6e6 }
+.actions { margin-top:16px }
+.btn.primary { background:#0b0b0b; color:#fff; padding:12px 16px; border-radius:10px; border:0; width:100%; font-weight:600 }
+.summary-card { background:#fff; padding:16px; border-radius:12px; border:1px solid #eef0f2; box-shadow:0 6px 18px rgba(16,24,32,0.06) }
+.field { display:flex; justify-content:space-between; margin-bottom:8px }
+.error { color:#f43f5e; margin-top:8px }
+.invalid { border-color:#f43f5e }
+
+/* Right panel styles (white card) */
+.payment-panel { background:#fff; padding:18px; border-radius:12px; box-shadow:0 10px 30px rgba(16,24,32,0.06) }
+.payment-panel .label { color:#111 }
+.payment-panel .card-element { background:#f9fafb }
+.checkout-left h2.title { margin-top:0; color:#fff }
+.checkout-left .summary { opacity:0.85 }
+
+/* Calendar styles */
+.calendar-box { margin-top:18px; background:linear-gradient(180deg,#0b0b0b 0%, #111214 100%); color:#fff; padding:12px; border-radius:12px }
+.calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
+.calendar-header button { background:transparent; border:1px solid rgba(255,255,255,0.08); color:#fff; padding:6px 10px; border-radius:6px }
+.month-label { font-weight:600 }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.calendar-grid .weekday { text-align:center; font-size:12px; color:rgba(255,255,255,0.6); }
+.calendar-grid .day { min-height:56px; background:rgba(255,255,255,0.03); border-radius:8px; padding:6px; cursor:pointer; position:relative; display:flex; flex-direction:column; align-items:flex-start }
+.calendar-grid .day.outmonth { opacity:0.35 }
+.calendar-grid .day.booked { box-shadow: inset 0 -4px 0 0 rgba(99,102,241,0.9); }
+.calendar-grid .day .label { font-size:14px; font-weight:600 }
+.calendar-grid .day .dot { width:8px; height:8px; border-radius:50%; background:#ef4444; position:absolute; right:8px; top:8px }
+.reservations-list { margin-top:12px; background:rgba(255,255,255,0.02); padding:8px; border-radius:8px }
+.reservations-list .field { color:#fff; margin-bottom:6px }
+.reservations-list .small { color:rgba(255,255,255,0.7) }
+
+/* Small responsive adjustments */
+@media (max-width:800px) {
+	.checkout-container { flex-direction:column }
+	.checkout-right { width:100% }
+}

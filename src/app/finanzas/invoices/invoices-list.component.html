@@ -1,0 +1,65 @@
+<div class="invoices-root">
+  <div class="page-header">
+    <h2>Facturas</h2>
+    <div class="header-actions">
+      <button class="btn" routerLink="/finanzas/treasury">Ir a Gestión Financiera</button>
+    </div>
+  </div>
+
+  <div class="card grid">
+    <section class="create">
+      <h4>Crear factura</h4>
+      <form (ngSubmit)="createInvoice()" class="form">
+        <div class="fields">
+          <label>Monto</label>
+          <input type="number" [(ngModel)]="amount" name="amount" min="0" placeholder="Ej: 300 (cents)" />
+
+          <label>Moneda</label>
+          <input type="text" [(ngModel)]="currency" name="currency" placeholder="usd" />
+
+          <label>Descripción</label>
+          <input type="text" [(ngModel)]="description" name="description" placeholder="Descripción breve" />
+
+          <label>Due date</label>
+          <input type="date" [(ngModel)]="due_date" name="due_date" />
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Crear</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="list">
+      <h4>Listado</h4>
+      <div *ngIf="loading" class="muted">Cargando...</div>
+
+      <div *ngIf="!loading && invoices.length" class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Monto</th>
+              <th>Moneda</th>
+              <th>Fecha</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inv of invoices" title="{{inv.description || ''}}">
+              <td class="id">{{ inv.id }}</td>
+              <td class="amount">{{ (inv.amount/100) | currency:(inv.currency ? (inv.currency | uppercase) : 'USD') }}</td>
+              <td class="currency">{{ inv.currency | uppercase }}</td>
+              <td class="date">{{ (inv.issued_at || inv.due_date || inv.created_at) | date:'short' }}</td>
+              <td class="actions-col">
+                <button class="btn" (click)="download(inv.id)">Descargar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="!loading && !invoices.length" class="muted">No hay facturas</div>
+    </section>
+  </div>
+</div>

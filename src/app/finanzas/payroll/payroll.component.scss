@@ -1,0 +1,140 @@
+.payroll-root {
+	padding: 20px;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.page-header {
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	margin-bottom:12px;
+}
+
+.card {
+	background: #fff;
+	padding: 18px;
+	border-radius: 10px;
+	box-shadow: 0 6px 18px rgba(20,30,40,0.04);
+}
+
+.grid {
+	display: grid;
+	/* formulario en la izquierda, lista a la derecha */
+	grid-template-columns: 420px 1fr;
+	gap: 20px;
+}
+
+.create {
+	background: #fbfdff;
+	border-radius: 8px;
+	padding: 14px;
+	box-shadow: 0 2px 6px rgba(15,23,42,0.03);
+}
+
+.fields {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+}
+
+.fields label { font-size:12px; color:#6b7280; margin-bottom:4px }
+.fields input, .fields select {
+	padding:10px 12px;
+	border:1px solid #e6e9ee;
+	border-radius:8px;
+	background:#fff;
+	box-shadow:none;
+}
+
+.payroll-form {
+	display:block;
+	padding: 10px 6px 0 6px;
+}
+
+.payroll-form h4 { margin-top:0; margin-bottom:10px; font-size:15px }
+
+.entries-table { width:100%; border-collapse:collapse }
+.entries-table thead th { text-align:left; padding:8px 6px; font-size:13px; color:#374151 }
+.entries-table tbody td { padding:6px; vertical-align:middle }
+.entries-table input[type="number"], .entries-table input[type="text"], .entries-table select {
+	width:100%; padding:6px 8px; border-radius:6px; border:1px solid #e6e9ee; box-sizing:border-box;
+}
+.entries-table select { background:#fff }
+
+.entries-table td button { background:transparent; border:none; color:#ef4444; cursor:pointer }
+
+.row-actions { display:flex; gap:8px; justify-content:flex-end; align-items:center }
+.icon-button { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:6px; border:1px solid transparent; background:transparent; cursor:pointer }
+.icon-button svg { display:block }
+.icon-button.primary { background:#2563eb; border-color:#2563eb; color:#fff }
+.icon-button.primary svg path { stroke:#fff }
+.icon-button:hover { opacity:0.95 }
+
+.payroll-form .actions { margin-top:8px }
+
+.summary {
+	background:#f8fafc; border:1px solid #eef2f7; padding:10px; border-radius:8px; color:#111827; font-size:14px;
+}
+
+.alert { padding:8px 10px; border-radius:6px; margin-bottom:10px }
+.alert.success { background:#ecfdf5; border:1px solid #bbf7d0; color:#065f46 }
+.alert.error { background:#fff1f2; border:1px solid #fecaca; color:#7f1d1d }
+
+.btn { padding:8px 10px; border-radius:6px; }
+.btn + .btn { margin-left:8px }
+
+
+.create h4, .list h4 { margin:0 0 10px 0; font-size:16px }
+
+.form .fields {
+	display:flex;
+	flex-direction:column;
+	gap:8px;
+}
+
+label { font-size:13px; color:#333 }
+input[type="text"], input[type="number"], input[type="date"] {
+	padding:8px 10px; border:1px solid #e6e9ee; border-radius:6px; width:100%; box-sizing:border-box;
+}
+
+.actions { margin-top:12px }
+
+.btn {
+	display:inline-block;
+	padding:8px 12px;
+	border-radius:6px;
+	border:1px solid transparent;
+	background:transparent;
+	cursor:pointer;
+}
+.btn.primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0 }
+.btn:hover { opacity:0.95 }
+
+.muted { color:#6b7280 }
+
+.table-wrap { overflow:auto }
+.table { width:100%; border-collapse:collapse; min-width:640px }
+.table thead th { text-align:left; padding:10px 12px; font-weight:600; color:#374151; border-bottom:1px solid #eef2f7 }
+.table tbody td { padding:12px; border-bottom:1px solid #f3f5f8; color:#111827 }
+.table tbody tr:nth-child(odd) { background: #fbfcfd }
+.table tbody tr:hover { background:#f7fafc }
+.actions-col { text-align:right }
+.amount-col { font-weight:600; text-align:right }
+.currency { text-transform:uppercase; color:#6b7280 }
+.date { color:#6b7280; font-size:13px }
+
+@media (max-width: 860px) {
+	.grid { grid-template-columns: 1fr; }
+	.table { min-width:0 }
+	.actions-col { text-align:left }
+
+	/* allow the payroll form to expand on small screens */
+	.payroll-form { max-height: none; overflow: visible; padding:6px 0 0 0 }
+
+	.fields { grid-template-columns: 1fr }
+
+	.entries-table thead { display:none }
+	.entries-table, .entries-table tbody, .entries-table tr, .entries-table td { display:block; width:100% }
+	.entries-table tr { margin-bottom:8px; border-bottom:1px solid #f3f5f8; padding-bottom:6px }
+	.entries-table td { padding:6px 0 }
+}

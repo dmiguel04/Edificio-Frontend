@@ -1,0 +1,25 @@
+<div class="success-root">
+	<div class="success-card">
+				<div class="icon-wrap">
+					<!-- Simple green ring (no fill) to match design -->
+					<svg class="svg-ring" viewBox="0 0 60 60" width="72" height="72" aria-hidden="true">
+						<circle cx="30" cy="30" r="26" fill="none" stroke="var(--color-accent)" stroke-width="4" />
+					</svg>
+				</div>
+
+				<div class="content-center">
+					<h1 class="title">Pedido realizado con éxito</h1>
+					<p class="subtitle">Gracias por tu pedido</p>
+
+					<div class="meta" *ngIf="transactionId || customerEmail">
+						<div *ngIf="transactionId"><strong>ID transacción:</strong> {{ transactionId }}</div>
+						<div *ngIf="customerEmail"><strong>Enviado a:</strong> {{ customerEmail }}</div>
+					</div>
+
+					<div class="actions">
+						<a routerLink="/finanzas" class="btn primary">Volver a finanzas</a>
+						<a routerLink="/finanzas/treasury" class="btn" style="margin-left:8px">Ir a Gestión Financiera</a>
+					</div>
+				</div>
+	</div>
+</div>

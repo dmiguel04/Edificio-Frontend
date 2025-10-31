@@ -1,0 +1,127 @@
+<div class="checkout-root">
+  <div class="checkout-container">
+    <div class="checkout-left">
+      <h2 class="title">Pagar reserva</h2>
+
+      <form [formGroup]="form" (ngSubmit)="pay()">
+        <div *ngIf="!payExisting">
+          <div class="form-row">
+            <label class="label">Área</label>
+            <select formControlName="area_comun" (change)="onAreaChanged()">
+              <option value="">Seleccione área</option>
+              <option *ngFor="let a of areas" [value]="a.id">{{ a.label }}</option>
+            </select>
+            <div class="small muted">Selecciona un área para ver el calendario de reservas</div>
+            <div *ngIf="form.controls['area_comun'].invalid && form.controls['area_comun'].touched" class="error small">Área requerida</div>
+          </div>
+
+          <div class="form-row">
+            <label class="label">Fecha de reserva</label>
+            <input type="date" formControlName="fecha_reserva" />
+            <div *ngIf="form.controls['fecha_reserva'].invalid && form.controls['fecha_reserva'].touched" class="error small">Fecha requerida</div>
+          </div>
+
+          <div class="form-row">
+            <label class="label">Hora inicio</label>
+            <input type="time" formControlName="hora_inicio" />
+            <label class="label">Hora fin</label>
+            <input type="time" formControlName="hora_fin" />
+            <div *ngIf="(form.controls['hora_inicio'].invalid || form.controls['hora_fin'].invalid) && (form.controls['hora_inicio'].touched || form.controls['hora_fin'].touched)" class="error small">Horario requerido</div>
+            <div *ngIf="form.errors?.['timeRangeInvalid'] && (form.controls['hora_inicio'].touched || form.controls['hora_fin'].touched)" class="error small">La hora de inicio debe ser anterior a la hora de fin</div>
+          </div>
+        </div>
+
+        <div *ngIf="payExisting" class="summary-block">
+          <h4>Reservación</h4>
+          <div class="field"><span>ID:</span><span>{{ existingReservation?.reservation_id || existingReservation?.id }}</span></div>
+          <div class="field"><span>Área:</span><span>{{ existingReservation?.area_comun_name || existingReservation?.area_comun || '' }}</span></div>
+          <div class="field"><span>Fecha:</span><span>{{ existingReservation?.start_date || existingReservation?.fecha_reserva }}</span></div>
+          <div class="field"><span>Hora:</span><span>{{ existingReservation?.hora_inicio }} - {{ existingReservation?.hora_fin }}</span></div>
+        </div>
+
+        <div class="form-row">
+          <label class="label">Monto a pagar (USD)</label>
+          <input type="number" step="0.01" formControlName="amount" [ngClass]="{invalid: form.controls['amount'].invalid && form.controls['amount'].touched}" placeholder="Ingrese monto" />
+        </div>
+
+        <!-- Calendar preview for selected area -->
+        <div class="calendar-box" *ngIf="areas && areas.length">
+          <div class="calendar-header">
+            <button type="button" (click)="changeMonth(-1)">&lt;</button>
+            <div class="month-label">{{ calendarMonth | date:'MMMM yyyy' }}</div>
+            <button type="button" (click)="changeMonth(1)">&gt;</button>
+          </div>
+          <div class="calendar-grid">
+            <div class="weekday" *ngFor="let w of ['Dom','Lun','Mar','Mie','Jue','Vie','Sab']">{{ w }}</div>
+            <div class="day" *ngFor="let cell of calendarDays" [class.outmonth]="!cell.inMonth" [class.booked]="cell.hasReservations" (click)="selectDay(cell)">
+              <div class="label">{{ cell.label }}</div>
+              <div *ngIf="cell.hasReservations" class="dot"></div>
+            </div>
+          </div>
+
+          <div class="reservations-list">
+            <div *ngIf="selectedDay; else pickDay">
+              <h4>Reservas para {{ selectedDay | date:'yyyy-MM-dd' }}</h4>
+              <div *ngIf="getReservationsForSelectedDay().length; else noRes">
+                <div *ngFor="let r of getReservationsForSelectedDay()">
+                  <div class="field"><strong>{{ r.title || r.summary || (r.owner_name || r.user || r.email) }}</strong></div>
+                  <div class="small">{{ r.hora_inicio || r.start_time || r.start }} - {{ r.hora_fin || r.end_time || r.end }}</div>
+                </div>
+              </div>
+              <ng-template #noRes><div class="small muted">No hay reservas en este día.</div></ng-template>
+            </div>
+            <ng-template #pickDay>
+              <div class="small muted">Seleccione un día del mes para ver las reservas</div>
+            </ng-template>
+          </div>
+        </div>
+
+        <div *ngIf="showPaymentPanel || payExisting" class="card-box">
+          <label class="label">Número de tarjeta</label>
+          <div id="card-element" class="card-element"></div>
+          <div *ngIf="error" class="error">{{ error }}</div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" [disabled]="loading">{{ loading ? 'Procesando...' : ((!showPaymentPanel && !payExisting) ? 'Crear reserva' : 'Pagar ahora') }}</button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="checkout-right">
+      <div *ngIf="!showPaymentPanel && !payExisting" class="summary-card">
+        <h3>Resumen</h3>
+  <div class="field"><span>Monto:</span><span>{{ form.value['amount'] ? (form.value['amount'] | currency:'USD') : '' }}</span></div>
+        <div class="field small">Incluye impuestos y cargos si aplican</div>
+      </div>
+
+      <div *ngIf="showPaymentPanel || payExisting" class="payment-panel">
+        <h3>Ingresa los datos de pago</h3>
+        <div class="form-row">
+          <label class="label">Correo electrónico</label>
+          <input type="email" formControlName="email" placeholder="user@example.com" />
+        </div>
+
+        <div class="form-row">
+          <label class="label">Método de pago</label>
+          <div *ngIf="gateways && gateways.length; else onlyCard">
+            <div *ngFor="let g of gateways">
+              <label><input type="radio" name="gateway" [value]="g.id" [(ngModel)]="selectedGateway" /> {{ g.label }}</label>
+            </div>
+          </div>
+          <ng-template #onlyCard>
+            <div>Tarjeta</div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="selectedGateway === 'card'" class="card-box-right">
+          <label class="label">Número de tarjeta</label>
+          <div id="card-element" class="card-element"></div>
+          <div *ngIf="error" class="error">{{ error }}</div>
+        </div>
+
+        <div class="small note">Incluye impuestos y cargos si aplican</div>
+      </div>
+    </aside>
+  </div>
+</div>

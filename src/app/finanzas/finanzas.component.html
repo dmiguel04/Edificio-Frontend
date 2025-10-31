@@ -9,13 +9,28 @@
   </div>
 
   <div>
+    <div class="controls mb-4 flex items-center gap-3">
+      <label class="text-sm">Mostrar:</label>
+      <select [(ngModel)]="filterMode" (change)="changeFilter(filterMode)" class="p-2 border rounded">
+        <option value="mine">Mis pagos</option>
+        <option value="all">Todos</option>
+        <option value="user">Por usuario</option>
+      </select>
+      <input *ngIf="filterMode === 'user'" [(ngModel)]="filterUserId" placeholder="user_id" class="p-2 border rounded" />
+      <button class="btn outline" (click)="loadPayments(1)">Aplicar</button>
+      <div style="margin-left:8px; display:flex; gap:8px; align-items:center">
+        <input placeholder="Buscar por pago ID" [(ngModel)]="searchPaymentId" class="p-2 border rounded" />
+        <button class="btn outline" (click)="searchById()">Buscar ID</button>
+        <button class="btn" (click)="showFullList()">Ver lista</button>
+      </div>
+    </div>
     <div *ngIf="loading" class="flex items-center gap-3 text-gray-600"> <svg class="w-6 h-6 animate-spin text-blue-600" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor" stroke-opacity="0.2" fill="none"></circle><path d="M4 12a8 8 0 018-8" stroke-width="4" stroke="currentColor" stroke-linecap="round" fill="none"></path></svg> Cargando pagos...</div>
 
     <div *ngIf="errorMessage" class="bg-red-50 text-red-700 p-3 rounded mb-4">{{ errorMessage }}</div>
     <div *ngIf="successMessage" class="bg-green-50 text-green-700 p-3 rounded mb-4">{{ successMessage }}</div>
 
     <div *ngIf="!loading && !errorMessage">
-      <div *ngIf="payments.length; else emptyState">
+  <div *ngIf="payments.length; else emptyState">
         <div class="bg-white rounded-lg shadow p-4">
           <div class="flex items-center justify-between mb-3">
             <h3 class="text-lg font-semibold">Pagos</h3>
@@ -29,12 +44,13 @@
                   <th class="p-3">Monto</th>
                   <th class="p-3">Fecha</th>
                   <th class="p-3">Estado</th>
+                    <th class="p-3">Acciones</th>
                 </tr>
               </thead>
               <tbody class="text-sm text-gray-700">
                 <tr *ngFor="let payment of payments" class="border-b hover:bg-gray-50">
                   <td class="p-3">{{ payment.id }}</td>
-                  <td class="p-3 font-semibold">{{ payment.amount | currency }}</td>
+                  <td class="p-3 font-semibold">{{ (payment.amount/100) | currency:(payment.currency ? (payment.currency | uppercase) : 'USD') }}</td>
                   <td class="p-3">{{ (payment.created || payment.created_at || payment.createdAt) | date:'short' }}</td>
                   <td class="p-3">
                     <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
@@ -43,9 +59,22 @@
                       'bg-red-50 text-red-700': payment.status === 'failed' || payment.status === 'canceled'
                     }">{{ payment.status }}</span>
                   </td>
+                  <td class="p-3 flex gap-2">
+                    <button class="btn outline" (click)="viewPayment(payment.id)">Ver</button>
+                    <button *ngIf="downloadGloballyAvailable === true" class="btn outline" (click)="downloadReceipt(payment.id)">Descargar recibo</button>
+                    <button *ngIf="downloadGloballyAvailable === false" class="btn outline" disabled title="Endpoint de descarga no disponible">Desc. no disponible</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="mt-3 flex items-center justify-between">
+            <div class="text-sm text-gray-600">Mostrando página {{ page }}{{ totalCount ? (' — ' + totalCount + ' resultados') : '' }}</div>
+            <div class="pagination flex gap-2">
+              <button class="btn outline" [disabled]="page<=1" (click)="goToPage(page-1)">Anterior</button>
+              <button class="btn outline" (click)="goToPage(page+1)">Siguiente</button>
+            </div>
           </div>
         </div>
       </div>
@@ -54,6 +83,10 @@
         <div class="text-center py-12">
           <p class="text-gray-600 mb-4">No hay pagos registrados todavía.</p>
           <button class="px-4 py-2 bg-green-600 text-white rounded" (click)="createPayment()">Crear primer pago</button>
+          <div class="mt-6 text-left bg-gray-50 p-3 rounded border">
+            <strong>Respuesta cruda del API (debug):</strong>
+            <pre style="max-height:200px;overflow:auto;margin-top:8px;background:#fff;padding:8px;border-radius:6px;border:1px solid #eef2f7">{{ lastResponse | json }}</pre>
+          </div>
         </div>
       </ng-template>
     </div>

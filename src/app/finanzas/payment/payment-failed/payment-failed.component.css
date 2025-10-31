@@ -1,0 +1,45 @@
+.failed-root {
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	padding: 40px 16px;
+}
+.failed-card {
+	max-width:520px;
+	width:100%;
+	text-align:center;
+	background:#fff;
+	border-radius:8px;
+	padding:36px 20px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+.svg-cross { display:block }
+.cross {
+	width:120px;
+	height:120px;
+	border-radius:999px;
+	background: var(--color-error);
+	display:flex; align-items:center; justify-content:center;
+	color:#fff; font-size:64px; font-weight:700;
+	margin:0 auto;
+}
+.title { font-size:24px; color:var(--color-error); margin:18px 0 8px }
+.subtitle { color:#666; margin-bottom:18px }
+.actions { margin-top:16px; display:flex; gap:8px; justify-content:center }
+.btn { padding:10px 14px; border-radius:6px; text-decoration:none }
+.btn.secondary { background:#e05050; color:#fff }
+.btn.muted { background:transparent; color:#333; border:1px solid #e6e6e6 }
+
+.cross, .check { transform: scale(0); animation: pop 360ms cubic-bezier(.2,.9,.3,1) forwards }
+@keyframes pop { to { transform: scale(1) } }
+
+.crossmark {
+	stroke-dasharray: 60;
+	stroke-dashoffset: 60;
+	animation: drawCross 500ms ease-out forwards 200ms;
+}
+@keyframes drawCross { to { stroke-dashoffset: 0 } }
+
+.meta { font-size:0.95rem; color:var(--color-muted); margin-top:10px }
+.meta strong { color:var(--text); margin-right:8px }
+
